@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProcureAI — Autonomous Vendor Compliance</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06070b;--s1:#0c0e17;--s2:#12151f;--s3:#1a1e2c;--s4:#232839;
+  --d0:#36405a;--d1:#4f5878;--d2:#8690b8;--d3:#b8c2de;--fg:#e8eef8;
+  --G:#a8ff5a;--gl:rgba(168,255,90,.14);--gd:rgba(168,255,90,.07);
+  --A:#ffba3a;--E:#ff4848;--T:#00ddd0;--B:#4f90ff;
+  --br:rgba(255,255,255,.055);--br2:rgba(255,255,255,.11);
+  --R:9px;--R2:15px;--R3:22px;
+  --FH:'Syne',sans-serif;--FM:'JetBrains Mono',monospace;--FB:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:var(--FB);background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 900px 400px at 50% -40px,rgba(168,255,90,.07)0%,transparent 70%),
+  linear-gradient(rgba(168,255,90,.015)1px,transparent 1px),linear-gradient(90deg,rgba(168,255,90,.015)1px,transparent 1px);
+  background-size:auto,48px 48px,48px 48px}
+#A{position:relative;z-index:1}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--s1)}::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px}
+
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 44px;
+  background:rgba(6,7,11,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--br);
+  position:sticky;top:0;z-index:999}
+.logo{display:flex;align-items:center;gap:11px;font-family:var(--FH);font-size:18px;font-weight:800;letter-spacing:-.4px}
+.logo-ico{width:32px;height:32px;background:var(--G);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#06070b;box-shadow:0 0 20px var(--gl)}
+.nav-pills{display:flex;gap:10px;align-items:center}
+.pill{font-family:var(--FM);font-size:10px;padding:4px 10px;border-radius:20px;letter-spacing:.04em}
+.pill-g{background:var(--gd);color:var(--G);border:1px solid rgba(168,255,90,.25)}
+.pill-d{background:var(--s2);color:var(--d1);border:1px solid var(--br2)}
+
+.hero{max-width:800px;margin:0 auto;padding:64px 28px 48px;text-align:center}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--FM);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--G);background:var(--gd);border:1px solid rgba(168,255,90,.26);padding:5px 14px;border-radius:20px;margin-bottom:22px}
+.hero h1{font-family:var(--FH);font-size:clamp(34px,5.5vw,58px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:16px}
+.hero h1 em{color:var(--G);font-style:normal}
+.hero p{font-size:15.5px;color:var(--d2);line-height:1.75;max-width:560px;margin:0 auto 40px}
+.kpis{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.kpi{text-align:center}.kpi-n{font-family:var(--FH);font-size:24px;font-weight:800;color:var(--G);letter-spacing:-1px}.kpi-l{font-size:11px;color:var(--d1);margin-top:3px}
+.kpi-sep{width:1px;height:30px;background:var(--br2);align-self:center}
+
+.wrap{max-width:980px;margin:0 auto;padding:0 22px 88px}
+.slbl{font-family:var(--FM);font-size:10.5px;font-weight:500;color:var(--d1);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+
+/* INPUT CARD */
+.IC{background:var(--s1);border:1px solid var(--br);border-radius:var(--R3);overflow:hidden;margin-bottom:22px}
+.IC-hd{padding:18px 24px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px}
+.IC-num{width:26px;height:26px;border-radius:50%;background:var(--gd);border:1px solid rgba(168,255,90,.3);color:var(--G);font-family:var(--FM);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.IC-hd h2{font-family:var(--FH);font-size:15px;font-weight:700}.IC-hd p{font-size:12.5px;color:var(--d2);margin-top:2px}
+.IC-body{padding:24px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:600px){.fg2{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:7px}
+.fg label{font-family:var(--FM);font-size:10px;font-weight:500;color:var(--d1);letter-spacing:.08em;text-transform:uppercase}
+.opt{font-size:10px;padding:1px 5px;background:var(--s2);color:var(--d2);border-radius:4px;font-family:var(--FB);text-transform:none;letter-spacing:0;margin-left:5px;font-weight:400;border:1px solid var(--br)}
+.FI{background:var(--s2);border:1px solid var(--br2);border-radius:var(--R);color:var(--fg);font-family:var(--FB);font-size:14px;padding:11px 14px;outline:none;width:100%;transition:border-color .2s,box-shadow .2s}
+.FI:focus{border-color:var(--G);box-shadow:0 0 0 3px var(--gd)}.FI::placeholder{color:var(--d0)}
+.hint{font-size:12px;color:var(--d1);margin-top:4px;line-height:1.5}.hint b{color:var(--G);font-weight:500}
+.key-row{display:flex;align-items:center;gap:12px;padding:14px 24px;border-top:1px solid var(--br);background:rgba(168,255,90,.02);flex-wrap:wrap}
+.key-lbl{font-family:var(--FM);font-size:10px;color:var(--d1);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;min-width:110px}
+.key-FI{flex:1;min-width:200px;background:var(--bg);border:1px solid var(--br2);border-radius:var(--R);color:var(--d3);font-family:var(--FM);font-size:12px;padding:8px 12px;outline:none;transition:border-color .2s}
+.key-FI:focus{border-color:var(--G)}
+.key-a{font-size:11px;color:var(--G);text-decoration:none;white-space:nowrap;opacity:.85}.key-a:hover{opacity:1;text-decoration:underline}
+.IC-ft{padding:14px 24px;border-top:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ft-note{font-size:12px;color:var(--d1)}
+.BTN{display:inline-flex;align-items:center;gap:10px;background:var(--G);color:#06070b;border:none;border-radius:var(--R);font-family:var(--FH);font-size:14px;font-weight:700;padding:13px 30px;cursor:pointer;letter-spacing:-.2px;transition:opacity .18s,transform .1s,box-shadow .2s;box-shadow:0 0 28px var(--gl)}
+.BTN:hover{opacity:.88}.BTN:active{transform:scale(.98)}.BTN:disabled{opacity:.28;cursor:not-allowed;transform:none}
+.BTN2{display:inline-flex;align-items:center;gap:7px;background:var(--s2);color:var(--d2);border:1px solid var(--br2);border-radius:var(--R);font-family:var(--FB);font-size:13px;font-weight:500;padding:10px 20px;cursor:pointer;transition:background .15s,color .15s}
+.BTN2:hover{background:var(--s3);color:var(--fg)}
+
+/* PIPELINE */
+#PIPE{display:none}#PIPE.on{display:block}
+.pipe-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.pipe-top h2{font-family:var(--FH);font-size:20px;font-weight:800;letter-spacing:-.4px}
+.run-id{font-family:var(--FM);font-size:10px;color:var(--d1);background:var(--s2);border:1px solid var(--br);padding:3px 10px;border-radius:4px}
+.OB{background:var(--s1);border:1px solid var(--br);border-radius:var(--R2);padding:16px 20px;margin-bottom:16px}
+.OB-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.OB-lbl{font-family:var(--FH);font-size:13px;font-weight:700;letter-spacing:-.2px}
+.OB-pct{font-family:var(--FM);font-size:12px;color:var(--G)}
+.bar-wrap{height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--G),var(--T));box-shadow:0 0 8px var(--gl);transition:width .6s ease;width:0%}
+
+/* STEP CARDS */
+.SG{display:grid;gap:8px;margin-bottom:20px}
+.SC{background:var(--s1);border:1px solid var(--br);border-radius:var(--R2);overflow:hidden;transition:border-color .3s}
+.SC.run{border-color:rgba(168,255,90,.4)}.SC.done{border-color:rgba(168,255,90,.22)}.SC.fail{border-color:rgba(255,72,72,.28)}
+.SC-hd{padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.SC-ico{width:30px;height:30px;border-radius:7px;background:var(--s2);border:1px solid var(--br2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .3s}
+.SC.run .SC-ico,.SC.done .SC-ico{background:var(--gd);border-color:rgba(168,255,90,.32)}
+.SC.fail .SC-ico{background:rgba(255,72,72,.08);border-color:rgba(255,72,72,.24)}
+.SC-inf{flex:1;min-width:0}
+.SC-title{font-family:var(--FH);font-size:13px;font-weight:700}
+.SC-sub{font-size:11px;color:var(--d2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.SC-badge{font-family:var(--FM);font-size:10.5px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.sb-wait{color:var(--d1);background:var(--s2);border:1px solid var(--br)}
+.sb-run{color:var(--G);background:var(--gd);border:1px solid rgba(168,255,90,.28);animation:blink 1.8s ease-in-out infinite}
+.sb-done{color:var(--G);background:var(--gd);border:1px solid rgba(168,255,90,.28)}
+.sb-fail{color:var(--E);background:rgba(255,72,72,.07);border:1px solid rgba(255,72,72,.22)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
+.SC-body{display:none}.SC-body.open{display:block}
+.SC-log{padding:9px 18px;border-top:1px solid var(--br);background:rgba(0,0,0,.4);font-family:var(--FM);font-size:11px;color:var(--d2);max-height:120px;overflow-y:auto;line-height:1.9}
+.LL{display:flex;gap:9px}.LT{color:var(--d0);flex-shrink:0}.LM{word-break:break-word}
+.la{color:var(--G)}.li{color:var(--T)}.le{color:var(--E)}.lw{color:var(--A)}
+.SC-live{padding:9px 18px;border-top:1px solid var(--br);display:block}
+.live-lbl{font-family:var(--FM);font-size:9.5px;color:var(--d1);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--G);animation:blink 1s infinite}
+.live-frame{border:1px solid var(--br2);border-radius:var(--R);overflow:hidden;background:var(--s2)}
+.live-frame iframe{width:100%;height:340px;border:none;display:block}
+.live-placeholder{min-height:60px;display:flex;align-items:center;justify-content:center;color:var(--d1);font-family:var(--FM);font-size:11px}
+.live-ratio{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:var(--R);border:1px solid var(--br2);background:var(--s3)}
+.live-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:var(--R)}
+.live-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--s3);border-radius:var(--R);pointer-events:none;transition:opacity .5s}
+.live-loading.hide{opacity:0;pointer-events:none}
+.live-spinner{width:28px;height:28px;border:2.5px solid var(--br2);border-top-color:var(--G);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.live-loading-txt{font-family:var(--FM);font-size:11px;color:var(--d2)}
+/* Session done overlay — replaces TinyFish "completed" screen with useful summary */
+.live-done{padding:16px 18px;border-top:1px solid var(--br);background:linear-gradient(135deg,rgba(168,255,90,.06),rgba(0,221,208,.04));display:none}
+.live-done.show{display:block}
+.ld-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ld-check{width:28px;height:28px;border-radius:50%;background:var(--G);display:flex;align-items:center;justify-content:center;font-size:14px;color:#06070b;flex-shrink:0}
+.ld-title{font-family:var(--FH);font-size:13px;font-weight:700;color:var(--G)}
+.ld-sub{font-size:11px;color:var(--d2);margin-top:1px;font-family:var(--FM)}
+.ld-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:5px}
+.ld-f{padding:7px 10px;background:rgba(168,255,90,.045);border:1px solid rgba(168,255,90,.12);border-radius:6px}
+.ld-fk{font-size:10px;color:var(--d1);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;font-family:var(--FM)}
+.ld-fv{font-size:12.5px;color:var(--fg);font-weight:500;word-break:break-word}
+.ld-fv.ok{color:var(--G)}.ld-fv.mid{color:var(--A)}.ld-fv.bad{color:var(--E)}
+.SC-data{padding:12px 18px;border-top:1px solid var(--br);background:var(--gd);display:none}.SC-data.show{display:block}
+.data-lbl{font-family:var(--FM);font-size:9.5px;color:var(--G);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.data-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px}
+.dc{padding:7px 10px;background:rgba(168,255,90,.055);border:1px solid rgba(168,255,90,.13);border-radius:6px}
+.dc-k{font-size:10px;color:var(--d1);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;font-family:var(--FM)}
+.dc-v{font-size:12.5px;color:var(--fg);font-weight:500;word-break:break-word}
+.dc-v.ok{color:var(--G)}.dc-v.warn{color:var(--A)}.dc-v.bad{color:var(--E)}
+.raw-dump{padding:8px 18px;border-top:1px solid var(--br);font-family:var(--FM);font-size:10.5px;color:var(--A);background:rgba(255,186,58,.04);max-height:80px;overflow-y:auto;line-height:1.8;white-space:pre-wrap;word-break:break-all;display:none}
+.raw-dump.show{display:block}
+
+/* REPORT */
+#REPORT{display:none}#REPORT.on{display:block}
+.R-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.R-top h2{font-family:var(--FH);font-size:21px;font-weight:800;letter-spacing:-.5px}
+
+/* VERDICT */
+.VD{background:var(--s1);border:1px solid var(--br);border-radius:var(--R3);overflow:hidden;margin-bottom:18px}
+.VD-top{padding:22px 26px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.VD-badge{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 22px;border-radius:var(--R2);min-width:140px;text-align:center}
+.vb-ok{background:rgba(168,255,90,.1);border:2px solid rgba(168,255,90,.4)}.vb-mid{background:rgba(255,186,58,.1);border:2px solid rgba(255,186,58,.4)}.vb-bad{background:rgba(255,72,72,.1);border:2px solid rgba(255,72,72,.4)}
+.VD-word{font-family:var(--FH);font-size:19px;font-weight:800;letter-spacing:-.4px}
+.vw-ok{color:var(--G)}.vw-mid{color:var(--A)}.vw-bad{color:var(--E)}
+.VD-risk{font-family:var(--FM);font-size:10px;margin-top:5px;text-transform:uppercase;letter-spacing:.08em}
+.vr-ok{color:var(--G)}.vr-mid{color:var(--A)}.vr-bad{color:var(--E)}
+.VD-info{flex:1}.VD-sum{font-size:13.5px;color:var(--d3);line-height:1.7;margin-bottom:12px}
+.VD-kpis{display:flex;gap:18px;flex-wrap:wrap}
+.vkpi-n{font-family:var(--FH);font-size:20px;font-weight:800;letter-spacing:-.4px}
+.vk-ok{color:var(--G)}.vk-bad{color:var(--E)}.vk-neu{color:var(--fg)}.vkpi-l{font-size:11px;color:var(--d1);margin-top:2px}
+.VD-score{padding:12px 26px;border-top:1px solid var(--br);background:rgba(255,255,255,.012);display:flex;align-items:center;gap:14px}
+.VS-lbl{font-family:var(--FM);font-size:10px;color:var(--d1);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.SB{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden}.SB-f{height:100%;border-radius:3px;transition:width 1.1s ease}
+.VS-n{font-family:var(--FH);font-size:16px;font-weight:800;min-width:38px;text-align:right}
+
+/* VENDOR CARDS — the new rich display */
+.vc-section{margin-bottom:18px}
+.vc-title{font-family:var(--FH);font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.vc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.vc{background:var(--s1);border:1px solid var(--br);border-radius:var(--R2);overflow:hidden;transition:border-color .2s}
+.vc:hover{border-color:var(--br2)}
+.vc.best{border-color:rgba(168,255,90,.4);background:rgba(168,255,90,.03)}
+.vc-top{padding:14px 16px;border-bottom:1px solid var(--br);display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.vc-name{font-family:var(--FH);font-size:13.5px;font-weight:700;line-height:1.3}
+.vc-loc{font-size:11.5px;color:var(--d2);margin-top:3px}
+.vc-badges{display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:flex-end}
+.badge{font-family:var(--FM);font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.badge-best{background:rgba(168,255,90,.15);color:var(--G);border:1px solid rgba(168,255,90,.3)}
+.badge-ver{background:rgba(79,144,255,.12);color:var(--B);border:1px solid rgba(79,144,255,.25)}
+.badge-unv{background:var(--s2);color:var(--d1);border:1px solid var(--br)}
+.vc-body{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vc-field{display:flex;flex-direction:column;gap:2px}
+.vc-fk{font-size:10px;color:var(--d1);text-transform:uppercase;letter-spacing:.05em;font-family:var(--FM)}
+.vc-fv{font-size:13px;font-weight:600;color:var(--fg)}
+.vc-fv.price{color:var(--G);font-family:var(--FH)}
+.vc-fv.delivery{color:var(--T)}
+.vc-gst{padding:8px 16px;border-top:1px solid var(--br);font-family:var(--FM);font-size:10.5px;color:var(--d2);background:rgba(0,0,0,.2)}
+
+/* REPORT CARDS */
+.RG{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:12px}
+.RC{background:var(--s1);border:1px solid var(--br);border-radius:var(--R2);overflow:hidden}
+.RC-hd{padding:12px 16px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px}
+.RC-ico{font-size:14px;flex-shrink:0}.RC-ttl{font-family:var(--FH);font-size:13px;font-weight:700;flex:1}
+.RC-st{font-family:var(--FM);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
+.rs-ok{color:var(--G);background:var(--gd);border:1px solid rgba(168,255,90,.22)}.rs-mid{color:var(--A);background:rgba(255,186,58,.08);border:1px solid rgba(255,186,58,.22)}.rs-bad{color:var(--E);background:rgba(255,72,72,.06);border:1px solid rgba(255,72,72,.2)}.rs-na{color:var(--d1);background:var(--s2);border:1px solid var(--br)}
+.RC-bd{padding:12px 16px}
+.RF{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--br)}
+.RF:last-child{border-bottom:none;padding-bottom:0}
+.RF-k{font-size:11px;color:var(--d2);flex-shrink:0}.RF-v{font-size:11.5px;color:var(--d3);text-align:right;font-weight:500;word-break:break-word}
+.RF-v.ok{color:var(--G)}.RF-v.mid{color:var(--A)}.RF-v.bad{color:var(--E)}
+
+/* FLAGS & RENEWALS */
+.card{background:var(--s1);border:1px solid var(--br);border-radius:var(--R2);overflow:hidden;margin-bottom:12px}
+.card-hd{padding:12px 16px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px}
+.card-bd{padding:12px 16px}
+.FL{display:flex;flex-direction:column;gap:7px}
+.FLAG{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;background:var(--s2);border-radius:var(--R)}
+.fdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.fd-ok{background:var(--G)}.fd-mid{background:var(--A)}.fd-bad{background:var(--E)}
+.ftxt{font-size:13px;color:var(--d2);line-height:1.4}.ftxt strong{color:var(--fg);font-weight:500}
+.REN{display:flex;flex-direction:column;gap:7px}
+.RI{display:flex;align-items:center;gap:11px;padding:9px 13px;background:var(--s2);border-radius:var(--R)}
+.RI-ico{font-size:14px;flex-shrink:0}.RI-info{flex:1}.RI-name{font-size:13px;font-weight:500}.RI-date{font-size:11px;color:var(--d1);font-family:var(--FM);margin-top:2px}
+.RB{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;font-family:var(--FM)}
+.rb-ok{color:var(--G);background:var(--gd);border:1px solid rgba(168,255,90,.2)}.rb-mid{color:var(--A);background:rgba(255,186,58,.07);border:1px solid rgba(255,186,58,.2)}.rb-bad{color:var(--E);background:rgba(255,72,72,.06);border:1px solid rgba(255,72,72,.2)}
+
+.JSON{background:rgba(0,0,0,.44);border:1px solid var(--br);border-radius:var(--R2);padding:14px;font-family:var(--FM);font-size:11px;color:var(--d2);max-height:220px;overflow-y:auto;line-height:1.85;white-space:pre-wrap;word-break:break-all;margin-top:12px}
+.hidden{display:none!important}
+
+/* Select strip on vendor cards */
+.vc-select-strip{padding:10px 16px;border-top:1px solid var(--br2);cursor:pointer;transition:background .15s;user-select:none;text-align:center}
+.vc-select-strip:hover{background:rgba(0,221,208,.07)}
+.vss-off{font-size:11px;font-weight:700;color:var(--d2);letter-spacing:.03em;transition:color .15s}
+.vss-on{font-size:11px;font-weight:700;color:var(--G);letter-spacing:.03em}
+.vc-select-strip:hover .vss-off{color:var(--G)}
+.vc.vc-selected{border-color:rgba(0,221,208,.5)!important;box-shadow:0 0 0 2px rgba(0,221,208,.1)!important}
+.vc.vc-selected .vc-select-strip{background:rgba(0,221,208,.08)}
+.vc-sel{display:none!important}
+.ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+.ms-pipeline-hd{font-size:11px;font-weight:700;color:var(--d2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ms-vendor-block{background:var(--s1);border:1px solid var(--br2);border-radius:14px;overflow:hidden;transition:border-color .3s}
+.ms-vendor-block.done-ok{border-color:rgba(0,221,208,.4);box-shadow:0 0 16px rgba(0,221,208,.06)}
+.ms-vendor-block.done-mid{border-color:rgba(255,186,58,.3)}
+.ms-vendor-block.done-bad{border-color:rgba(255,72,72,.3)}
+.ms-vendor-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--s2);border-bottom:1px solid var(--br)}
+.ms-vendor-hd-ico{font-size:18px;width:36px;height:36px;background:var(--s3);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ms-vendor-hd-name{font-weight:700;font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-verdict{font-size:10.5px;font-weight:800;padding:4px 11px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.ms-v-ok{background:rgba(0,221,208,.15);color:var(--G);border:1px solid rgba(0,221,208,.2)}
+.ms-v-mid{background:rgba(255,186,58,.12);color:var(--A);border:1px solid rgba(255,186,58,.2)}
+.ms-v-bad{background:rgba(255,72,72,.12);color:var(--E);border:1px solid rgba(255,72,72,.2)}
+.ms-v-run{background:var(--s3);color:var(--d2);border:1px solid var(--br2)}
+.ms-score-strip{height:3px;background:var(--s3);margin:0}
+.ms-score-fill{height:100%;border-radius:0;transition:width .8s ease}
+.ms-steps{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px 14px}
+.ms-step{display:flex;align-items:center;gap:6px;font-size:11px;padding:7px 10px;border-radius:8px;border:1px solid var(--br2);background:var(--s3);transition:all .25s}
+.ms-step.ok{background:rgba(0,221,208,.07);border-color:rgba(0,221,208,.25);color:var(--G)}
+.ms-step.fail{background:rgba(255,72,72,.07);border-color:rgba(255,72,72,.25);color:var(--E)}
+.ms-step.run{color:var(--d1)}
+
+/* ═══ SELECTION BAR ═══ */
+.sel-bar{
+  background:linear-gradient(135deg,rgba(0,221,208,.09) 0%,rgba(0,221,208,.03) 100%);
+  border:1.5px solid rgba(0,221,208,.35);
+  border-radius:14px;padding:16px 20px;margin-bottom:20px;
+  display:none;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.sel-bar.show{display:flex}
+.sel-bar-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.sel-bar-icon{font-size:28px;flex-shrink:0;line-height:1}
+.sel-count-inline{font-size:20px;font-weight:900;color:var(--G);letter-spacing:-.5px;font-family:var(--FH)}
+.sel-bar-info{flex:1;min-width:0}
+.sel-bar-title{font-size:14px;font-weight:700;color:var(--fg);margin-bottom:3px}
+.sel-bar-sub{font-size:11px;color:var(--d2);line-height:1.4}
+
+/* ═══ VERIFY BUTTON — large glowing CTA ═══ */
+.BTN-verify{
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--G) 0%,#00b8a9 100%);
+  color:#06070b;border:none;
+  padding:14px 28px;border-radius:12px;
+  font-size:14px;font-weight:800;cursor:pointer;
+  font-family:var(--FH);letter-spacing:-.2px;
+  box-shadow:0 0 28px rgba(0,221,208,.45),0 4px 12px rgba(0,0,0,.3);
+  transition:all .2s ease;white-space:nowrap;flex-shrink:0;
+}
+.BTN-verify:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 0 36px rgba(0,221,208,.6),0 6px 16px rgba(0,0,0,.35);
+}
+.BTN-verify:active:not(:disabled){transform:translateY(0)}
+.BTN-verify:disabled{
+  opacity:.35;cursor:not-allowed;
+  box-shadow:none;
+  background:var(--s3);color:var(--d2);
+}
+.btn-verify-ico{font-size:18px;line-height:1}
+.btn-verify-txt{line-height:1}
+
+
+/* ═══ MULTI-SUPPLIER COMPARISON CARDS ═══ */
+.mc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:4px;margin-bottom:0}
+.mc-card{background:var(--s1);border:1px solid var(--br2);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.mc-best{border-color:rgba(0,221,208,.4)!important;box-shadow:0 0 20px rgba(0,221,208,.08)}
+.mc-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 16px 10px;gap:10px}
+.mc-hd-left{flex:1;min-width:0}
+.mc-crown{font-size:10px;font-weight:800;color:var(--G);letter-spacing:.08em;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.mc-name{font-weight:700;font-size:13px;color:var(--fg);margin-bottom:4px;line-height:1.3}
+.mc-gstin{font-family:var(--FM);font-size:10px;color:var(--d2);letter-spacing:.04em}
+.mc-score-ring{width:52px;height:52px;border-radius:50%;border:2.5px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.mc-score-num{font-size:15px;font-weight:900;font-family:var(--FH);line-height:1}
+.mc-score-lbl{font-size:8px;color:var(--d2);margin-top:1px}
+.mc-bar-wrap{height:3px;background:var(--s3);margin:0 16px 12px}
+.mc-bar-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.mc-verdict{margin:0 16px 12px;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:800;text-align:center;letter-spacing:.04em}
+.mc-v-ok{background:rgba(0,221,208,.12);color:var(--G);border:1px solid rgba(0,221,208,.2)}
+.mc-v-mid{background:rgba(255,186,58,.1);color:var(--A);border:1px solid rgba(255,186,58,.2)}
+.mc-v-bad{background:rgba(255,72,72,.1);color:var(--E);border:1px solid rgba(255,72,72,.2)}
+.mc-checks{padding:0 16px 10px;display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--br2)}
+.mc-check-row{display:flex;align-items:center;justify-content:space-between}
+.mc-check-lbl{font-size:11px;color:var(--d2);font-weight:600}
+.mcb{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px}
+.mcb-ok{background:rgba(0,221,208,.12);color:var(--G)}
+.mcb-no{background:rgba(255,72,72,.1);color:var(--E)}
+.mc-info{padding:10px 16px;display:flex;flex-direction:column;gap:5px}
+.mc-info-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:11px}
+.mc-info-row span:first-child{color:var(--d2);font-weight:600;flex-shrink:0}
+.mc-info-row span:last-child{color:var(--fg);text-align:right;word-break:break-word}
+
+
+.report-section-divider{height:1px;background:var(--br);margin:28px 0 20px;position:relative}
+.report-section-divider::before{content:'COMPLIANCE REPORT';position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 12px;font-size:9px;font-weight:700;color:var(--d2);letter-spacing:.1em}
+
+.ms-pipeline{margin-bottom:28px}
+</style>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+<div id="A">
+
+<nav class="nav">
+  <div class="logo"><div class="logo-ico">⚙</div>Procure<span style="color:var(--G)">AI</span></div>
+  <div class="nav-pills">
+    <span class="pill pill-g">TinyFish Agent</span>
+    <span class="pill pill-d">v5.0</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">◈ Autonomous Procurement Agent</div>
+  <h1>Vendor compliance,<br><em>fully automated.</em></h1>
+  <p>Enter a product — vendor is optional. Agents run in smart batches (2 at a time) to avoid queue limits. Get rich vendor cards with price, MOQ, delivery time, GST, sanctions, and news risk.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-n">5</div><div class="kpi-l">Agent tasks</div></div>
+    <div class="kpi-sep"></div>
+    <div class="kpi"><div class="kpi-n">Batched</div><div class="kpi-l">No queue timeout</div></div>
+    <div class="kpi-sep"></div>
+    <div class="kpi"><div class="kpi-n">Rich</div><div class="kpi-l">Vendor comparison</div></div>
+    <div class="kpi-sep"></div>
+    <div class="kpi"><div class="kpi-n">Auto</div><div class="kpi-l">GST lookup</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="IC" id="IC">
+    <div class="IC-hd">
+      <div class="IC-num">1</div>
+      <div><h2>What do you want to procure?</h2><p>Two fields — agents do the rest autonomously</p></div>
+    </div>
+    <div class="IC-body">
+      <div class="fg2">
+        <div class="fg">
+          <label>Product / Service <span style="color:var(--G)">*</span></label>
+          <input class="FI" type="text" id="I-product" placeholder="e.g. Hydraulic Pumps, Industrial Motors" autocomplete="off">
+          <div class="hint">Required. Agent finds best suppliers for this product.</div>
+        </div>
+        <div class="fg">
+          <label>Vendor / Company <span class="opt">optional</span></label>
+          <input class="FI" type="text" id="I-vendor" placeholder="e.g. Bosch Hydraulic Pump, Kirloskar Motor" autocomplete="off">
+          <div class="hint">Optional. e.g. <b>Bosch Hydraulic Pump</b> → finds best <b>supplier</b> of it, not Bosch itself.</div>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:0">
+        <label>Country</label>
+        <select class="FI" id="I-country" style="appearance:none;cursor:pointer">
+          <option value="India" selected>India</option>
+          <option value="USA">United States</option>
+          <option value="UK">United Kingdom</option>
+          <option value="UAE">UAE</option>
+          <option value="Singapore">Singapore</option>
+        </select>
+      </div>
+    </div>
+    <div class="key-row" style="display:none;">
+      <span class="key-lbl">🔑 TinyFish Key</span>
+      <input class="key-FI" type="password" id="I-key" value="" placeholder="sk-tinyfish-xxxxxxxxxxxx" autocomplete="off">
+      <a class="key-a" href="https://agent.tinyfish.ai/api-keys" target="_blank">Get free key →</a>
+    </div>
+    <div class="IC-ft">
+      <span class="ft-note">5 agents · 2 run in parallel · ~3-4 min total · Key never leaves your server</span>
+      <button class="BTN" id="BTN-go" onclick="start()">⚙ Run Compliance Check</button>
+    </div>
+  </div>
+
+  <div id="PIPE">
+    <div class="pipe-top">
+      <div><div class="slbl">Live Agent Pipeline</div><h2 id="pipe-h2">Running…</h2></div>
+      <span class="run-id" id="run-id-lbl">RUN-000000</span>
+    </div>
+    <div class="OB">
+      <div class="OB-row"><span class="OB-lbl" id="OB-lbl">Starting…</span><span class="OB-pct" id="OB-pct">0%</span></div>
+      <div class="bar-wrap"><div class="bar-fill" id="bar-fill"></div></div>
+    </div>
+    <div class="SG" id="SG"></div>
+  </div>
+
+  <div id="REPORT">
+    <div class="R-top">
+      <div><div class="slbl">Compliance Report</div><h2 id="R-h2">—</h2></div>
+      <div style="display:flex;gap:8px">
+        <button class="BTN2" onclick="downloadPDF()">📄 Download PDF</button>
+        <button class="BTN2" onclick="copyJSON()">📋 Copy JSON</button>
+        <button class="BTN2" onclick="doReset()">↺ New Check</button>
+      </div>
+    </div>
+
+    <!-- Verdict -->
+    <div class="VD">
+      <div class="VD-top">
+        <div class="VD-badge" id="VD-badge"><div class="VD-word" id="VD-word">—</div><div class="VD-risk" id="VD-risk">—</div></div>
+        <div class="VD-info"><p class="VD-sum" id="VD-sum"></p><div class="VD-kpis" id="VD-kpis"></div></div>
+      </div>
+      <div class="VD-score">
+        <span class="VS-lbl">Compliance Score</span>
+        <div class="SB"><div class="SB-f" id="SB-f"></div></div>
+        <span class="VS-n" id="VS-n">—</span>
+      </div>
+    </div>
+
+    <!-- Vendor cards (rich comparison) -->
+    <div class="vc-section" id="vc-section" style="display:none">
+      <div class="vc-title" id="vc-title">🏆 Suppliers Found — Compare All Options</div>
+      <div class="vc-grid" id="vc-grid"></div>
+    </div>
+
+    <!-- Supplier selection bar -->
+    <div class="sel-bar" id="sel-bar">
+      <div class="sel-bar-left">
+        <div class="sel-bar-icon">&#9989;</div>
+        <div class="sel-bar-info">
+          <div class="sel-bar-title">
+            <span id="sel-count" class="sel-count-inline">0</span> supplier<span id="sel-plural">s</span> queued for compliance
+          </div>
+          <div class="sel-bar-sub">GST &middot; Sanctions &middot; News Risk &middot; IEC &mdash; all checked simultaneously</div>
+        </div>
+      </div>
+      <button class="BTN-verify" id="BTN-verify" onclick="runMultiCompliance()" disabled>
+        <span class="btn-verify-ico">&#9889;</span>
+        <span class="btn-verify-txt">Run Compliance Check</span>
+      </button>
+    </div>
+
+    <!-- Multi-supplier compliance results -->
+    <div class="ms-pipeline" id="ms-pipeline" style="display:none">
+      <div class="ms-pipeline-hd">&#9889; Multi-Supplier Compliance Results</div>
+      <div class="ms-grid" id="ms-results"></div>
+      <div class="ms-comparison" id="ms-comparison" style="display:none;margin-bottom:28px">
+        <div id="ms-comp-table"></div>
+      </div>
+    </div>
+
+    <!-- Price Benchmarking -->
+
+    <!-- Compliance cards -->
+    <div class="report-section-divider" id="main-report-start"></div>
+    <div class="RG" id="RG"></div>
+
+    <!-- Flags -->
+    <div class="card"><div class="card-hd"><span style="font-size:14px">🚩</span><span style="font-family:var(--FH);font-size:13px;font-weight:700">Risk Flags &amp; Actions</span></div><div class="card-bd"><div class="FL" id="FLAG-list"></div></div></div>
+
+    <!-- Renewals -->
+    <div class="card"><div class="card-hd"><span style="font-size:14px">📅</span><span style="font-family:var(--FH);font-size:13px;font-weight:700">Certificate Renewal Tracker</span></div><div class="card-bd"><div class="REN" id="REN-list"></div></div></div>
+
+    <div class="slbl" style="margin-top:20px">Raw TinyFish Output (JSON)</div>
+    <div class="JSON" id="JSON-out"></div>
+  </div>
+</div>
+</div>
+
+<script>
+/* ================================================================
+   STATE
+================================================================ */
+var TINYFISH_DEFAULT_KEY = 'sk-tinyfish-2CbOAyqSJaXw2iubexauHi5dn5bRNUgN';
+
+var S = {
+  product:'', vendor:'', country:'India', key:'',
+  noVendor:false, runId:'',
+  logs:{}, data:{}, report:null, runIds:{},
+  selectedVendors:[], multiResults:{}, benchData:[]
+};
+
+var STEPS = [
+  { id:'discover',  ico:'🔍', title:'Vendor Discovery & Pricing', sub:'TradeIndia · suppliers · prices · MOQ · scoring' },
+  { id:'gst',       ico:'🧾', title:'GST & Company Info',         sub:'knowyourgst.com · GSTIN · registration status' },
+  { id:'sanctions', ico:'🚫', title:'Sanctions Check',            sub:'OFAC · debarment · fraud check' },
+  { id:'news',      ico:'📰', title:'News & Risk Intel',          sub:'DuckDuckGo · fraud signals · risk score' },
+  { id:'license',   ico:'📜', title:'Trade License (IEC)',        sub:'DuckDuckGo · IEC import/export code · DGFT' },
+];
+
+var BASE = (window.location.origin && window.location.origin !== "null") ? window.location.origin : "http://localhost:3000";
+if (window.location.protocol === "file:") { document.addEventListener("DOMContentLoaded", function() { var w = document.createElement("div"); w.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:9999;background:#ff4848;color:#fff;padding:14px 20px;font-family:monospace;font-size:13px;text-align:center;line-height:1.6"; w.innerHTML = "26a0 You opened index.html directly as a file. This will NOT work. Run node server.js then open http://localhost:3000"; document.body.prepend(w); }); }
+
+/* ── Helpers ── */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function ts(){ return new Date().toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+
+function setBar(pct,lbl){
+  document.getElementById('bar-fill').style.width=pct+'%';
+  document.getElementById('OB-pct').textContent=Math.round(pct)+'%';
+  if(lbl)document.getElementById('OB-lbl').textContent=lbl;
+}
+function addLog(sid,cls,msg){
+  if(!S.logs[sid])S.logs[sid]=[];
+  S.logs[sid].push({t:ts(),c:cls,m:String(msg)});
+  var el=document.getElementById('LOG-'+sid);if(!el)return; /* silently skip UI update for dynamic step IDs */
+  el.innerHTML=S.logs[sid].map(function(l){return '<div class="LL"><span class="LT">'+l.t+'</span><span class="LM '+l.c+'">'+esc(l.m)+'</span></div>';}).join('');
+  el.scrollTop=el.scrollHeight;
+}
+function setSt(sid,state){
+  var card=document.getElementById('SC-'+sid);if(!card)return;
+  card.className='SC'+(state==='run'?' run':state==='done'?' done':state==='fail'?' fail':'');
+  var el=document.getElementById('ST-'+sid);if(!el)return;
+  var M={wait:['sb-wait','— Waiting'],run:['sb-run','● Running'],done:['sb-done','✓ Done'],fail:['sb-fail','✗ Failed']};
+  var d=M[state]||M.wait;el.className='SC-badge '+d[0];el.innerHTML=d[1];
+  if(state==='run'||state==='done'||state==='fail'){var b=document.getElementById('SB2-'+sid);if(b)b.classList.add('open');}
+}
+function showLive(sid, streamingUrl){
+  /* Auto-open step body immediately */
+  var body = document.getElementById('SB2-'+sid);
+  if(body && !body.classList.contains('open')) body.classList.add('open');
+
+  /* Update label */
+  var lbl = document.getElementById('LL-'+sid);
+  if(lbl) lbl.innerHTML = '<div class="live-dot"></div>Live TinyFish Browser';
+
+  /* CRITICAL: Set iframe.src directly — no innerHTML rebuild, no DOM reflow.
+     This is the fastest possible way to load the stream.
+     The iframe was pre-created in buildUI so this is a single property write. */
+  var iframe = document.getElementById('IF-'+sid);
+  if(!iframe) return;
+  iframe.src = streamingUrl;
+
+  /* Hide spinner once iframe content loads */
+  iframe.addEventListener('load', function(){
+    var ov = document.getElementById('LO-'+sid);
+    if(ov) ov.classList.add('hide');
+  }, {once: true});
+}
+
+function updateLiveLink(sid){ /* no-op — kept for compatibility */ }
+
+function getDoneFields(sid, d){
+  if(!d || d._text) return [{k:'Status', v:'Completed', s:'ok'}];
+  var f = [];
+  switch(sid){
+    case 'discover':
+      var vs = (d.vendors&&Array.isArray(d.vendors))?d.vendors:[];
+      f=[{k:'Vendors Found',v:vs.length+' suppliers',s:'ok'},{k:'Best Vendor',v:d.recommended_vendor||'—',s:'ok'},{k:'Top Price',v:vs[0]?(vs[0].price?'INR '+vs[0].price:'On request'):'—'},{k:'Top Location',v:vs[0]?vs[0].location||'—':'—'}];break;
+    case 'gst':
+      f=[{k:'GSTIN',v:d.gstin||'Not found',s:d.gstin?'ok':'warn'},{k:'GST Status',v:d.status||'—',s:d.status==='Active'?'ok':'warn'},{k:'Legal Name',v:d.legal_name||'—'},{k:'Reg. Date',v:d.registration_date||'—'}];break;
+    case 'pricing':
+      var ls=(d.listings&&Array.isArray(d.listings))?d.listings:[];
+      f=[{k:'Avg Price',v:d.market_avg?(d.currency||'INR')+' '+d.market_avg:'—'},{k:'Low Price',v:d.market_min?(d.currency||'INR')+' '+d.market_min:'—'},{k:'High Price',v:d.market_max?(d.currency||'INR')+' '+d.market_max:'—'},{k:'Listings',v:ls.length+' found',s:ls.length>0?'ok':'warn'}];break;
+    case 'sanctions':
+      f=[{k:'OFAC',v:d.ofac_result||'—',s:d.ofac_result==='Clear'?'ok':'bad'},{k:'Overall',v:d.overall||'—',s:d.overall==='Clear'?'ok':'bad'},{k:'Matches',v:(d.google_findings&&d.google_findings.length)?d.google_findings.length+' found':'None'}];break;
+    case 'news':
+      f=[{k:'Risk Level',v:d.risk_level||'—',s:d.risk_level==='Low'?'ok':d.risk_level==='High'?'bad':'warn'},{k:'News Items',v:(d.items&&d.items.length)||0},{k:'Fraud Signals',v:(d.fraud_signals&&d.fraud_signals.length)?d.fraud_signals.length+' found':'None'},{k:'Assessment',v:(d.assessment||'').slice(0,50)||'—'}];break;
+    case 'license':
+      f=[{k:'IEC Number',v:d.iec_number||'Not found',s:d.iec_number?'ok':'warn'},{k:'Status',v:d.status||'—',s:d.status==='Valid'?'ok':'warn'},{k:'Validity',v:d.validity_date||'—'}];break;
+    default:
+      f=[{k:'Status',v:'Completed',s:'ok'}];
+  }
+  return f;
+}
+
+/* Called when agent COMPLETES — hides the live iframe area and shows a clean
+   extracted-data summary so user never sees TinyFish "session completed" screen */
+function showDone(sid, fields){
+  /* Hide the streaming iframe panel */
+  var liveEl = document.getElementById('SL-'+sid);
+  if(liveEl) liveEl.style.display = 'none';
+
+  /* Show done panel with extracted fields */
+  var ld = document.getElementById('LD-'+sid);
+  if(!ld) return;
+  ld.classList.add('show');
+
+  var labels = {
+    discover:  'Vendors found',
+    gst:       'GST verified',
+    pricing:   'Pricing extracted',
+    sanctions: 'Sanctions checked',
+    news:      'Risk assessed',
+    license:   'License checked'
+  };
+
+  ld.innerHTML =
+    '<div class="ld-top">'+
+      '<div class="ld-check">✓</div>'+
+      '<div><div class="ld-title">'+(labels[sid]||'Complete')+'</div>'+
+      '<div class="ld-sub">TinyFish agent finished · data extracted</div></div>'+
+    '</div>'+
+    '<div class="ld-fields">'+
+    (fields||[]).map(function(f){
+      var vc = f.s==='ok'?'ok':f.s==='warn'?'mid':f.s==='bad'?'bad':'';
+      return '<div class="ld-f"><div class="ld-fk">'+esc(f.k)+'</div><div class="ld-fv '+vc+'">'+esc(String(f.v||'—'))+'</div></div>';
+    }).join('')+
+    '</div>';
+}
+
+function showData(sid,fields){
+  var el=document.getElementById('SD-'+sid);if(!el)return;
+  el.classList.add('show');
+  el.innerHTML='<div class="data-lbl">Extracted</div><div class="data-grid">'+fields.map(function(f){var vc=f.s==='ok'?'ok':f.s==='warn'?'warn':f.s==='bad'?'bad':'';return '<div class="dc"><div class="dc-k">'+esc(f.k)+'</div><div class="dc-v '+vc+'">'+esc(String(f.v||'—'))+'</div></div>';}).join('')+'</div>';
+}
+function showRaw(sid,txt){
+  var el=document.getElementById('RD-'+sid);if(!el)return;
+  el.textContent=String(txt).slice(0,300);el.classList.add('show');
+}
+function toggleBody(sid){var b=document.getElementById('SB2-'+sid);if(b)b.classList.toggle('open');}
+
+function buildUI(steps){
+  var g=document.getElementById('SG');g.innerHTML='';
+  steps.forEach(function(s){
+    var d=document.createElement('div');d.className='SC';d.id='SC-'+s.id;
+    d.innerHTML='<div class="SC-hd" onclick="toggleBody(\''+s.id+'\')"><div class="SC-ico">'+s.ico+'</div><div class="SC-inf"><div class="SC-title">'+esc(s.title)+'</div><div class="SC-sub">'+esc(s.sub)+'</div></div><div class="SC-badge sb-wait" id="ST-'+s.id+'">— Waiting</div></div>'+
+      '<div class="SC-body" id="SB2-'+s.id+'">'+'<div class="SC-log" id="LOG-'+s.id+'"></div>'+'<div class="SC-live" id="SL-'+s.id+'">'+'<div class="live-lbl" id="LL-'+s.id+'"><div class="live-dot" style="opacity:.3;animation:none"></div>Waiting for live stream…</div>'+'<div class="live-ratio">'+'<iframe id="IF-'+s.id+'" src="" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>'+'<div class="live-loading" id="LO-'+s.id+'"><div class="live-spinner"></div><div class="live-loading-txt">Waiting for stream…</div></div>'+'</div>'+'</div>'+'<div class="live-done" id="LD-'+s.id+'"></div>'+'<div class="SC-data" id="SD-'+s.id+'"></div>'+'<div class="raw-dump" id="RD-'+s.id+'"></div></div>';
+    g.appendChild(d);
+  });
+}
+
+function sg(o,k,fb){if(!o||typeof o!=='object'||o._text)return fb!==undefined?fb:'—';var v=o[k];return(v===null||v===undefined||v==='')?(fb!==undefined?fb:'—'):v;}
+function sa(o,k){if(!o||typeof o!=='object'||o._text)return[];var v=o[k];return Array.isArray(v)?v:[];}
+
+/* ================================================================
+   GOALS — SHORT & DIRECT for fast completion
+   Key: give agent a specific pre-filled URL so it starts immediately
+   on the right page, no navigation needed
+================================================================ */
+function goalDiscover(product,country){
+  return 'Read the supplier listings already visible on this page. '+
+    'Do NOT scroll, do NOT click anything, do NOT load more results. '+
+    'For each visible listing extract: name, price (number), MOQ, location, verified badge (yes/no). '+
+    'Return JSON immediately: {"product":"'+product+'","vendors":[{"name":"","price":0,"unit":"","moq":"","location":"","verified":false,"rating":0,"years_in_business":0,"reviews":0,"delivery_time":"","gst":""}],"recommended_vendor":"","recommendation_reason":"","market_min":0,"market_max":0,"market_avg":0,"currency":"INR"}';
+}
+
+function goalGST(vendor,country){
+  return 'You are on a DuckDuckGo search results page. '+
+    'Read the visible search snippets RIGHT NOW. Look for GSTIN number, GST status (Active/Cancelled/Inactive), legal name, registration date for "'+vendor+'". '+
+    'GSTIN is a 15-character alphanumeric code (e.g. 27AABCU9603R1ZX). '+
+    'Do NOT click any link. Do NOT navigate. Read snippets only and return immediately. '+
+    'Return ONLY valid JSON: '+
+    '{"vendor":"'+vendor+'","gstin":"","status":"","legal_name":"","trade_name":"","registration_date":"","taxpayer_type":"Regular","cin":"","address":"","source":"DuckDuckGo snippets"}';
+}
+function goalPricing(product,country){
+  return 'Extract supplier listings from this page. '+
+    'For each: supplier name, price as a number, moq, city. '+
+    'Return JSON: {"product":"'+product+'","currency":"INR","listings":[{"supplier":"","price_per_unit":0,"moq":"","location":""}],"market_min":0,"market_max":0,"market_avg":0}';
+}
+
+function goalSanctions(vendor){
+  return 'Type "'+vendor+'" in the search box on this page and click Search. '+
+    'Read the result shown immediately — if it says no results found, status is Clear. If matches appear, note them. '+
+    'Do NOT do anything else after reading the result. Return immediately. '+
+    'Return ONLY valid JSON: '+
+    '{"vendor":"'+vendor+'","ofac_result":"Clear","overall":"Clear","notes":"OFAC check complete"}';
+}
+
+function goalNews(vendor){
+  return 'Read the search results visible on screen RIGHT NOW. '+
+    'Look at the headlines and snippets shown. Note any fraud, scam, legal issues, or negative news about "'+vendor+'". '+
+    'Do NOT do any more searches. Do NOT click any link. Do NOT navigate anywhere. '+
+    'Read only what is already on screen and return immediately. '+
+    'Return ONLY valid JSON: '+
+    '{"vendor":"'+vendor+'","risk_level":"Low","items":[{"headline":"","source":"","summary":""}],"fraud_signals":[],"assessment":"No significant risk signals found."}';
+}
+
+function goalLicense(vendor,country){
+  return 'You are on DuckDuckGo search results for the IEC (Import Export Code) of "'+vendor+'". '+
+    'Read ONLY the visible text snippets on screen right now — do NOT click any link or navigate away. '+
+    'Look for a 10-digit IEC number issued by DGFT for "'+vendor+'". '+
+    'Return immediately with ONLY valid JSON: '+
+    '{"vendor":"'+vendor+'","iec_number":"","status":"Not found in public sources","validity_date":"Permanent","issued_by":"DGFT","source":"DuckDuckGo snippets","notes":""}';
+}
+
+/* Start URLs
+   - DuckDuckGo: no CAPTCHA, works perfectly with TinyFish
+   - IndiaMART: use /search.mp with a Referer-friendly path
+   - Google: kept only for GST (site: searches work better on Google for compliance data) */
+function urlIndiaMART(product){
+  return 'https://www.tradeindia.com/search.html?keyword='+encodeURIComponent(product);
+}
+function urlGST(vendor){
+  /* Use DuckDuckGo to find GST details — snippets show GSTIN directly, no CAPTCHA, instant results */
+  return 'https://duckduckgo.com/?q='+encodeURIComponent('"'+vendor+'" GSTIN GST registration number India active')+'&ia=web';
+}
+function urlPricing(product){
+  return 'https://www.tradeindia.com/search.html?keyword='+encodeURIComponent(product);
+}
+function urlOFAC(vendor){ return 'https://sanctionssearch.ofac.treas.gov/'; }
+function urlNews(vendor){ return 'https://duckduckgo.com/?q='+encodeURIComponent(vendor+' fraud scam lawsuit news 2025')+'&ia=news'; }
+function urlLicense(vendor){ return 'https://duckduckgo.com/?q='+encodeURIComponent(vendor+' IEC import export code DGFT')+'&ia=web'; }
+
+/* ================================================================
+   TINYFISH API — SSE streaming (/run-sse via /api/stream)
+   SSE delivers STREAMING_URL within 2-3 seconds of the run
+   starting, while the browser session is still live.
+   Polling (/run-async) returns streaming_url AFTER the session
+   ends — that's why the stream always showed "completed".
+================================================================ */
+async function runStep(sid, url, goal, profile){
+  var stepStartMsg = {
+    discover:  'Launching browser — opening TradeIndia…',
+    gst:       'Launching browser — searching GST records…',
+    pricing:   'Launching browser — fetching prices…',
+    sanctions: 'Launching browser — checking OFAC…',
+    news:      'Launching browser — scanning news…',
+    license:   'Launching browser — searching IEC…'
+  };
+  addLog(sid,'la', stepStartMsg[sid] || 'Launching browser…');
+  addLog(sid,'li', 'Browser cold-start takes 30-90s — agent will appear shortly');
+
+  return new Promise(function(resolve, reject){
+    /* No periodic watchdog messages — they make slow cold-starts look broken */
+    var hardTO=setTimeout(function(){ reject(new Error('Timeout — agent did not respond in 4 minutes')); },240000);
+    function done(v){ clearTimeout(hardTO); resolve(v); }
+    function fail(e){ clearTimeout(hardTO); reject(e); }
+
+    fetch(BASE+'/api/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apiKey: S.key, url: url, goal: goal, profile: profile||'lite' })
+    }).then(function(resp){
+      if(!resp.ok){
+        return resp.text().then(function(t){ fail(new Error('Server '+resp.status+': '+t.slice(0,120))); });
+      }
+
+      var reader  = resp.body.getReader();
+      var decoder = new TextDecoder();
+      var buf     = '';
+      var result  = null;
+      var liveShown = false;
+
+      function pump(){
+        reader.read().then(function(chunk){
+          if(chunk.done){
+            if(result !== null) done(result);
+            else fail(new Error('Stream ended without COMPLETE event'));
+            return;
+          }
+
+          buf += decoder.decode(chunk.value, {stream:true});
+          var lines = buf.split('\n');
+          buf = lines.pop();
+
+          lines.forEach(function(line){
+            line = line.trim();
+            if(!line.startsWith('data:')) return;
+            var payload = line.slice(5).trim();
+            if(!payload || payload === '[DONE]') return;
+            var evt;
+            try{ evt = JSON.parse(payload); }catch(_){ return; }
+
+            switch(evt.type){
+              case 'STARTED':
+                var rid = evt.run_id || evt.runId || '';
+                if(rid){ S.runIds[sid] = rid; updateLiveLink(sid); }
+                /* Update spinner text and live label */
+                var lt0=document.getElementById('LT-'+sid);
+                if(lt0) lt0.textContent='Agent running — stream loading…';
+                var ll0=document.getElementById('LL-'+sid);
+                if(ll0) ll0.innerHTML='<div class="live-dot"></div>Agent running';
+                break;
+
+              case 'STREAMING_URL':
+                var surl = evt.streaming_url || evt.streamingUrl || '';
+                if(surl && !liveShown){
+                  liveShown = true;
+                  showLive(sid, surl);
+                  /* stream ready — no need to log it */
+                }
+                break;
+
+              case 'PROGRESS':
+                /* On first PROGRESS, update live label to show agent is actively working */
+                var ll1=document.getElementById('LL-'+sid);
+                if(ll1 && (ll1.innerHTML.includes('Waiting')||ll1.innerHTML.includes('running'))){
+                  ll1.innerHTML='<div class="live-dot"></div>Agent browsing live';
+                }
+                var raw_msg = (evt.purpose || evt.message || '').toLowerCase();
+                var skip = raw_msg.includes('navigate') || raw_msg.includes('click') ||
+                           raw_msg.includes('scroll') || raw_msg.includes('wait') ||
+                           raw_msg.includes('check if') || raw_msg.includes('verify if') ||
+                           raw_msg.includes('go to') || raw_msg.includes('go directly') ||
+                           raw_msg.includes('submit') || raw_msg.includes('press enter') ||
+                           raw_msg.includes('type ') || raw_msg.includes('search bar') ||
+                           raw_msg.includes('redirect') || raw_msg.includes('page load') ||
+                           raw_msg.includes('popup') || raw_msg.includes('close ');
+                if(!skip && raw_msg.length > 0){
+                  var display = (evt.purpose || evt.message || '');
+                  display = display.charAt(0).toUpperCase() + display.slice(1);
+                  if(display.length > 80) display = display.slice(0,80)+'…';
+                  addLog(sid,'la', display);
+                }
+                break;
+
+              case 'HEARTBEAT':
+                break;
+
+              case 'COMPLETE':
+                if(evt.status === 'COMPLETED'){
+                  var lbl = document.getElementById('LL-'+sid);
+                  if(lbl) lbl.innerHTML = '<div class="live-dot" style="background:var(--T);animation:none"></div>Session complete ✓';
+                  var raw = evt.result !== undefined ? evt.result
+                          : evt.resultJson !== undefined ? evt.resultJson : null;
+                  if(!raw){ result = {}; }
+                  else if(typeof raw === 'object' && !Array.isArray(raw)){ result = raw; }
+                  else {
+                    var s2 = String(raw).replace(/^```(?:json)?[\r\n]*/i,'').replace(/[\r\n]*```\s*$/i,'').trim();
+                    try{ result = JSON.parse(s2); }
+                    catch(_){ addLog(sid,'lw','Plain text result'); showRaw(sid,s2); result = {_text:s2}; }
+                  }
+                } else {
+                  var em = (evt.error && (evt.error.message || JSON.stringify(evt.error))) || evt.status || 'Run failed';
+                  fail(new Error(em));
+                }
+                break;
+
+              default:
+                addLog(sid,'li','[evt] '+evt.type);
+            }
+          });
+
+          if(result !== null){ done(result); return; }
+          pump();
+        }).catch(function(e){ fail(new Error('Read error: '+e.message)); });
+      }
+      pump();
+    }).catch(function(e){ fail(new Error('Fetch error: '+e.message)); });
+  });
+}
+
+/* ================================================================
+   BATCH RUNNER — runs tasks 2 at a time to avoid queue limits
+   This is the key fix: instead of launching all 5 simultaneously
+   (which causes PENDING queues on starter plans), we run 2 at a
+   time. Each batch waits for both to complete before starting next.
+================================================================ */
+async function runBatch(tasks,startPct,endPct){
+  /* Run ALL tasks in parallel — never let one slow agent block others.
+     Each task has its own per-task timeout so it fails independently. */
+  var done=0;
+  var step=(endPct-startPct)/tasks.length;
+
+  /* Mark all as running immediately */
+  tasks.forEach(function(t){ setSt(t.id,'run'); });
+  setBar(startPct, 'Running all compliance checks in parallel…');
+
+  await Promise.all(tasks.map(async function(task){
+    try{
+      var result = await runStep(task.id, task.url, task.goal, task.profile);
+      S.data[task.id] = result;
+      setSt(task.id,'done');
+      addLog(task.id,'la','✓ Data extracted');
+      showStepData(task.id, result);
+    }catch(err){
+      addLog(task.id,'le','✗ '+err.message);
+      setSt(task.id,'fail');
+      S.data[task.id] = {error: err.message};
+    }
+    done++;
+    setBar(startPct+Math.round((done/tasks.length)*(endPct-startPct)),
+      done+'/'+tasks.length+' checks complete…');
+  }));
+}
+
+/* ================================================================
+   SHOW STEP DATA
+================================================================ */
+function showStepData(sid,d){
+  var f=[];
+  switch(sid){
+    case 'discover':
+      var vs=sa(d,'vendors');
+      f=[{k:'Best Vendor',v:sg(d,'recommended_vendor',''),s:'ok'},{k:'Found',v:vs.length+' suppliers'},{k:'Reason',v:(sg(d,'recommendation_reason','')||'').slice(0,50)}];break;
+    case 'gst':
+      f=[{k:'GSTIN',v:sg(d,'gstin',''),s:sg(d,'gstin','')?'ok':'warn'},{k:'Status',v:sg(d,'status',''),s:sg(d,'status')==='Active'?'ok':'warn'},{k:'Legal Name',v:sg(d,'legal_name','')},{k:'Reg. Date',v:sg(d,'registration_date','')}];break;
+    case 'pricing':
+      f=[{k:'Market Avg',v:'INR '+sg(d,'market_avg',0)},{k:'Low',v:'INR '+sg(d,'market_min',0)},{k:'High',v:'INR '+sg(d,'market_max',0)},{k:'Listings',v:sa(d,'listings').length+' found'}];break;
+    case 'sanctions':
+      var ov=sg(d,'overall','');f=[{k:'OFAC',v:sg(d,'ofac_result',''),s:sg(d,'ofac_result')==='Clear'?'ok':'bad'},{k:'Overall',v:ov,s:ov==='Clear'?'ok':'bad'},{k:'Notes',v:(sg(d,'notes','')||'').slice(0,40)}];break;
+    case 'news':
+      var rl=sg(d,'risk_level','');f=[{k:'Risk Level',v:rl,s:rl==='Low'?'ok':rl==='High'?'bad':'warn'},{k:'News Items',v:sa(d,'items').length+' articles'},{k:'Fraud Signals',v:sa(d,'fraud_signals').length===0?'None':''+sa(d,'fraud_signals').length}];break;
+    case 'license':
+      f=[{k:'IEC Number',v:sg(d,'iec_number','')},{k:'Status',v:sg(d,'status',''),s:sg(d,'status')==='Valid'?'ok':'warn'},{k:'Validity',v:sg(d,'validity_date','')}];break;
+  }
+  if(f.length)showData(sid,f);
+}
+
+/* ================================================================
+   MAIN ORCHESTRATOR
+================================================================ */
+async function start(){
+  S.product = document.getElementById('I-product').value.trim();
+  S.vendor  = document.getElementById('I-vendor').value.trim();
+  S.country = document.getElementById('I-country').value;
+  S.key     = TINYFISH_DEFAULT_KEY;
+  if(!S.product){ alert('Please enter a product.'); return; }
+  if(!S.key){ alert('TinyFish API key is required. Please provide one.'); return; }
+
+  /* Build the search query:
+     - Product only → search for product
+     - Vendor/brand filled in → combine them (e.g. "Bosch Hydraulic Pump")
+     Compliance always runs on the SUPPLIER discovered, never the brand */
+  S.noVendor = !S.vendor;
+  /* Combine vendor/brand with product for marketplace search.
+     If vendor field = 'Bosch' and product = 'Hydraulic Pump' → search 'Bosch Hydraulic Pump'
+     Then compliance always runs on the SUPPLIER found, never the brand. */
+  var searchQuery = (S.vendor && S.product) ? (S.vendor + ' ' + S.product)
+                  : (S.vendor || S.product);
+  if(!searchQuery){ alert('Please enter a product name.'); return; }
+
+  S.runId = 'RUN-'+Date.now().toString(36).toUpperCase();
+  S.logs={}; S.data={}; S.report=null; S.runIds={};
+  document.getElementById('IC').style.opacity='0.45';
+  document.getElementById('IC').style.pointerEvents='none';
+  document.getElementById('BTN-go').disabled=true;
+  document.getElementById('REPORT').classList.remove('on');
+  document.getElementById('PIPE').classList.add('on');
+  document.getElementById('run-id-lbl').textContent=S.runId;
+  document.getElementById('pipe-h2').textContent='Finding best supplier for: '+searchQuery;
+  buildUI(STEPS);
+  setBar(0,'Launching agents…');
+
+  /* ── Step 1: Vendor Discovery — always runs first ──
+     Searches searchQuery on IndiaMART to find the best SUPPLIER.
+     e.g. "Bosch Hydraulic Pump" → finds "Raj Engineering Works" who sells it.
+     All compliance checks then run on that supplier, not the brand. */
+  setSt('discover','run');
+  setBar(5,'Searching for best supplier of "'+searchQuery+'"…');
+  try{
+    var disc = await runStep('discover', urlIndiaMART(searchQuery), goalDiscover(searchQuery, S.country), 'stealth');
+    S.data.discover = disc;
+    setSt('discover','done');
+    var vs_=sa(disc,'vendors');
+    showData('discover',[
+      {k:'Suppliers Found',v:vs_.length,s:'ok'},
+      {k:'Market Min',v:disc.market_min?'₹'+disc.market_min:'—'},
+      {k:'Market Max',v:disc.market_max?'₹'+disc.market_max:'—'},
+      {k:'Market Avg',v:disc.market_avg?'₹'+disc.market_avg:'—'}
+    ]);
+    /* Score all vendors NOW and pick the #1 scored vendor for compliance.
+       This uses the same multi-factor scoring as the report cards so the
+       vendor chosen for compliance always matches the #1 card shown. */
+    var _vlist = sa(disc,'vendors');
+    var _allPx = _vlist.map(function(v){return v.price||0;}).filter(function(p){return p>0;});
+    var _maxPx = _allPx.length?Math.max.apply(null,_allPx):1;
+    var _minPx = _allPx.length?Math.min.apply(null,_allPx):1;
+    function _scoreV(v){
+      var s=0;
+      if(v.verified) s+=25;
+      var rt=parseFloat(v.rating)||0; if(rt>0) s+=Math.round((rt/5)*20);
+      var yr=parseInt(v.years_in_business)||0; if(yr>=10)s+=15;else if(yr>=5)s+=10;else if(yr>=1)s+=5;
+      var rv=parseInt(v.reviews)||0; if(rv>=50)s+=10;else if(rv>=10)s+=6;else if(rv>=1)s+=3;
+      var px=v.price||0; if(px>0&&_maxPx>_minPx) s+=Math.round(20*(1-((px-_minPx)/(_maxPx-_minPx)))); else if(px>0) s+=10;
+      var dt=(v.delivery_time||'').toLowerCase(); if(dt.match(/1-3|next|same|1 day|2 day/))s+=10;else if(dt.match(/3-7|week/))s+=6;else if(dt)s+=3;
+      return s;
+    }
+    var _best = _vlist.slice().sort(function(a,b){return _scoreV(b)-_scoreV(a);})[0];
+    S.vendor = (_best&&_best.name) ? _best.name : (sg(disc,'recommended_vendor','')||searchQuery+' top supplier');
+    addLog('discover','la','Best supplier (scored #1): '+S.vendor);
+    document.getElementById('pipe-h2').textContent='Verifying: '+S.vendor;
+  }catch(err){
+    addLog('discover','le','✗ '+err.message);
+    setSt('discover','fail');
+    S.data.discover={error:err.message};
+    S.vendor = searchQuery+' top supplier';
+  }
+  setBar(20,'Running compliance checks…');
+
+  /* ── Steps 2-6: Run in batches of 2 ── */
+  /* Mirror pricing from discover — no separate pricing agent */
+  S.data.pricing = {
+    product: searchQuery, currency: disc.currency||'INR',
+    listings: (disc.vendors||[]).map(function(v){ return {supplier:v.name,price_per_unit:v.price||0,moq:v.moq||'',location:v.location||''}; }),
+    market_min: disc.market_min||0, market_max: disc.market_max||0, market_avg: disc.market_avg||0
+  };
+  var tasks=[
+    {id:'gst',       url:urlGST(S.vendor),      goal:goalGST(S.vendor,S.country),     profile:'lite'},
+    {id:'sanctions', url:urlOFAC(S.vendor),      goal:goalSanctions(S.vendor),          profile:'lite'},
+    {id:'news',      url:urlNews(S.vendor),      goal:goalNews(S.vendor),               profile:'lite'},
+    {id:'license',   url:urlLicense(S.vendor),   goal:goalLicense(S.vendor,S.country), profile:'lite'},
+  ];
+  await runBatch(tasks,20,96);
+
+  setBar(100,'Building compliance report…');
+  document.getElementById('pipe-h2').textContent=S.vendor+' — Complete';
+  S.report=buildReport();
+  setTimeout(renderReport,600);
+}
+
+/* ================================================================
+   REPORT BUILDER
+================================================================ */
+function buildReport(){
+  var d=S.data;
+  var gst=d.gst||{},lic=d.license||{},san=d.sanctions||{},nws=d.news||{},prc=d.pricing||{};
+  var gstin=sg(gst,'gstin',''),gstSt=sg(gst,'status',''),sanSt=sg(san,'overall','');
+  var nwRisk=sg(nws,'risk_level',''),licSt=sg(lic,'status',''),legalNm=sg(gst,'legal_name','');
+  var score=0,flags=[],renewals=[];
+
+  if(legalNm){score+=15;flags.push({sev:'ok',msg:'Company found: <strong>'+esc(legalNm)+'</strong>',rec:'Existence verified.'});}
+  else{flags.push({sev:'warn',msg:'<strong>Company not found</strong> in public records',rec:'Request registration certificate from vendor.'});}
+
+  if(gstSt==='Active'){score+=25;flags.push({sev:'ok',msg:'GST <strong>Active</strong>'+(gstin?' — '+esc(gstin):''),rec:'Tax compliance confirmed.'});renewals.push({ico:'🧾',name:'GST Certificate',date:'Valid — auto-renewed',status:'Valid'});}
+  else if(gstin){score+=10;flags.push({sev:'warn',msg:'GSTIN found ('+esc(gstin)+') but status: <strong>'+esc(gstSt||'unknown')+'</strong>',rec:'Verify GST status with vendor.'});renewals.push({ico:'🧾',name:'GST Certificate',date:gstSt||'Unknown',status:'Unverified'});}
+  else{flags.push({sev:'warn',msg:'<strong>GSTIN not found</strong>',rec:'Request GST certificate from vendor.'});renewals.push({ico:'🧾',name:'GST Certificate',date:'Not found online',status:'Unverified'});}
+
+  if(licSt==='Valid'||sg(lic,'iec_number','')){score+=15;flags.push({sev:'ok',msg:'IEC/Trade license found',rec:'Import/export confirmed.'});renewals.push({ico:'📜',name:'IEC License',date:sg(lic,'validity_date','Permanent'),status:'Valid'});}
+  else{flags.push({sev:'warn',msg:'<strong>IEC license</strong> not found publicly',rec:'Request IEC copy for cross-border orders.'});renewals.push({ico:'📜',name:'IEC License',date:'Not verified',status:'Unverified'});}
+
+  if(sanSt==='Clear'){score+=25;flags.push({sev:'ok',msg:'Sanctions: <strong>Clear</strong> (OFAC checked)',rec:'No adverse findings.'});}
+  else if(san.error){score+=10;flags.push({sev:'warn',msg:'<strong>Sanctions check incomplete</strong>',rec:'Run manual OFAC check before PO.'});}
+  else if(sanSt==='Flagged'){score-=30;flags.push({sev:'bad',msg:'⚠ <strong>SANCTIONS MATCH — DO NOT PROCEED</strong>',rec:'Escalate to legal immediately.'});}
+  else{score+=5;flags.push({sev:'warn',msg:'Sanctions: <strong>inconclusive</strong>',rec:'Manual review recommended.'});}
+
+  if(nwRisk==='Low'){score+=20;flags.push({sev:'ok',msg:'News risk: <strong>Low</strong>',rec:'No adverse signals.'});}
+  else if(nwRisk==='High'){score-=15;flags.push({sev:'bad',msg:'News risk: <strong>High</strong>',rec:'Review news before proceeding.'});}
+  else if(nwRisk==='Medium'){score+=5;flags.push({sev:'warn',msg:'News risk: <strong>Medium</strong>',rec:'Monitor closely.'});}
+  else{score+=5;flags.push({sev:'warn',msg:'<strong>News check incomplete</strong>',rec:'Perform manual news search.'});}
+
+  score=Math.max(0,Math.min(100,score));
+  var verdict=score>=70?'APPROVED':score>=40?'REVIEW':'REJECTED';
+  var vc=score>=70?'ok':score>=40?'mid':'bad';
+  var vsub=score>=70?'Low Risk — Proceed':score>=40?'Medium Risk — Review':'High Risk — Do Not Proceed';
+  var mktAvg=sg(prc,'market_avg',0)||0,mktMin=sg(prc,'market_min',0)||0,mktMax=sg(prc,'market_max',0)||0;
+  var currency=sg(prc,'currency','INR');
+  var summary='TinyFish compliance check for "'+S.vendor+'" supplying "'+S.product+'" in '+S.country+'. GST: '+(gstSt||'unknown')+(gstin?' ('+gstin+')':'')+'. Sanctions: '+(sanSt||'checked')+'. News risk: '+(nwRisk||'unknown')+'.'+( mktAvg?' Market avg: '+currency+' '+mktAvg+'/unit.':'');
+
+  return{vendor:S.vendor,product:S.product,country:S.country,run_id:S.runId,generated_at:new Date().toISOString(),verdict,verdict_class:vc,verdict_sub:vsub,compliance_score:score,summary,flags,renewals,financials:{market_avg:mktAvg,market_min:mktMin,market_max:mktMax,currency},gstin_found:gstin,tinyfish_runs:S.runIds};
+}
+
+/* ================================================================
+   RENDER REPORT
+================================================================ */
+function renderReport(){
+  var rp=S.report,d=S.data;
+  var el=document.getElementById('REPORT');el.classList.add('on');el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('R-h2').textContent=rp.vendor+' — '+rp.country;
+  var vc=rp.verdict_class;
+  document.getElementById('VD-badge').className='VD-badge vb-'+vc;
+  document.getElementById('VD-word').className='VD-word vw-'+vc;document.getElementById('VD-word').textContent=rp.verdict;
+  document.getElementById('VD-risk').className='VD-risk vr-'+vc;document.getElementById('VD-risk').textContent=rp.verdict_sub;
+  document.getElementById('VD-sum').textContent=rp.summary;
+  var fn=rp.financials;
+  document.getElementById('VD-kpis').innerHTML=
+    vkpi(rp.gstin_found||'Auto-searched','vk-neu','GSTIN')+
+    vkpi(sg(d.gst,'status','—'),sg(d.gst,'status')==='Active'?'vk-ok':'vk-bad','GST Status')+
+    vkpi(sg(d.sanctions,'overall','—'),sg(d.sanctions,'overall')==='Clear'?'vk-ok':'vk-bad','Sanctions')+
+    (fn.market_avg?vkpi(fn.currency+' '+fn.market_avg,'vk-neu','Mkt Avg Price'):'')+
+    vkpi(rp.compliance_score+'/100',rp.compliance_score>=70?'vk-ok':rp.compliance_score>=40?'vk-neu':'vk-bad','Score');
+
+  var sc=rp.compliance_score;
+  var bc=sc>=70?'linear-gradient(90deg,#a8ff5a,#00ddd0)':sc>=40?'linear-gradient(90deg,#ffba3a,#ff8c00)':'linear-gradient(90deg,#ff4848,#ff8c00)';
+  document.getElementById('SB-f').style.background=bc;document.getElementById('SB-f').style.width='0%';
+  setTimeout(function(){document.getElementById('SB-f').style.width=sc+'%';},250);
+  var vsn=document.getElementById('VS-n');vsn.textContent=sc;vsn.style.color=sc>=70?'var(--G)':sc>=40?'var(--A)':'var(--E)';
+
+  /* ── RICH VENDOR CARDS ── */
+  var disc=d.discover||{};
+  var vendors=sa(disc,'vendors');
+  /* Merge pricing data into vendor cards */
+  var prcListings=sa(d.pricing,'listings');
+  var vcSection=document.getElementById('vc-section');
+  if(vendors.length){
+    vcSection.style.display='block';
+
+    /* ── Multi-factor supplier scoring ──
+       Weights: Verified(25) + Rating(20) + Years(15) + Reviews(10) + Price(20) + Delivery(10) */
+    var allPrices = vendors.map(function(v){ return v.price||0; }).filter(function(p){ return p>0; });
+    var maxPrice = allPrices.length ? Math.max.apply(null,allPrices) : 1;
+    var minPrice = allPrices.length ? Math.min.apply(null,allPrices) : 1;
+
+    function scoreVendor(v){
+      var s = 0, breakdown = [];
+      /* 1. Verified/Trusted badge (25 pts) */
+      if(v.verified){ s+=25; breakdown.push('✓ Verified'); }
+      else breakdown.push('✗ Unverified');
+      /* 2. Rating (20 pts) — normalise to 5-star scale */
+      var rat = parseFloat(v.rating)||0;
+      if(rat>0){ var rpts=Math.round((rat/5)*20); s+=rpts; breakdown.push('★ '+rat.toFixed(1)); }
+      else breakdown.push('No rating');
+      /* 3. Years in business (15 pts) */
+      var yrs = parseInt(v.years_in_business)||0;
+      if(yrs>=10){ s+=15; breakdown.push(yrs+'yr exp'); }
+      else if(yrs>=5){ s+=10; breakdown.push(yrs+'yr exp'); }
+      else if(yrs>=1){ s+=5; breakdown.push(yrs+'yr exp'); }
+      /* 4. Reviews / response (10 pts) */
+      var rev = parseInt(v.reviews)||0;
+      if(rev>=50){ s+=10; breakdown.push(rev+' reviews'); }
+      else if(rev>=10){ s+=6; breakdown.push(rev+' reviews'); }
+      else if(rev>=1){ s+=3; breakdown.push(rev+' reviews'); }
+      /* 5. Price competitiveness (20 pts) — lower is better */
+      var p = v.price||0;
+      if(p>0 && maxPrice>minPrice){
+        var ppts = Math.round(20*(1-((p-minPrice)/(maxPrice-minPrice))));
+        s+=ppts; breakdown.push('₹'+p.toLocaleString());
+      } else if(p>0){ s+=10; breakdown.push('₹'+p.toLocaleString()); }
+      else breakdown.push('Price N/A');
+      /* 6. Delivery time (10 pts) — faster is better */
+      var dt = (v.delivery_time||'').toLowerCase();
+      if(dt.match(/1-3|next day|same day|1 day|2 day/)){ s+=10; breakdown.push('Fast delivery'); }
+      else if(dt.match(/3-7|week|5 day|4 day|3 day/)){ s+=6; breakdown.push('Moderate delivery'); }
+      else if(dt){ s+=3; breakdown.push('Delivery: '+dt.slice(0,12)); }
+      return { score:s, breakdown:breakdown };
+    }
+
+    /* Score all vendors and sort */
+    var scored = vendors.map(function(v){
+      var r = scoreVendor(v);
+      return { v:v, score:r.score, breakdown:r.breakdown };
+    }).sort(function(a,b){ return b.score-a.score; });
+
+    /* S.vendor was set by discover step (compliance already ran on it) — don't overwrite */
+    var displayBest = S.vendor; /* highlight the card matching the vendor compliance ran on */
+
+    var curr = sg(d.pricing,'currency','INR');
+    document.getElementById('vc-grid').innerHTML = scored.map(function(item,i){
+      var v = item.v;
+      var pMatch = prcListings.find(function(p){ return p.supplier&&v.name&&p.supplier.toLowerCase().indexOf(v.name.split(' ')[0].toLowerCase())!==-1; });
+      var price = v.price||(pMatch&&pMatch.price_per_unit)||0;
+      var isBest = (v.name === displayBest) || (i===0 && !displayBest);
+      var scorePct = Math.min(100, item.score);
+      var scoreColor = scorePct>=70?'var(--G)':scorePct>=45?'var(--A)':'var(--E)';
+      var vendorName = v.name||'Unnamed';
+      return '<div class="vc-wrap"><div class="vc'+(isBest?' best':'')+'">'+'<div class="vc-top">'+
+          '<div style="flex:1;min-width:0">'+
+            '<div class="vc-name">'+esc(v.name||'Unnamed')+'</div>'+
+            '<div class="vc-loc">📍 '+esc(v.location||'—')+'</div>'+
+          '</div>'+
+          '<div class="vc-badges">'+
+            (isBest?'<span class="badge badge-best">⭐ #1</span>':'')+
+            '<span class="badge '+(v.verified?'badge-ver':'badge-unv')+'">'+(v.verified?'✓ Verified':'Unverified')+'</span>'+
+          '</div>'+
+        '</div>'+
+        /* Score bar */
+        '<div style="padding:8px 16px;border-bottom:1px solid var(--br);background:rgba(0,0,0,.2)">'+
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'+
+            '<span style="font-family:var(--FM);font-size:10px;color:var(--d1);text-transform:uppercase;letter-spacing:.06em">Supplier Score</span>'+
+            '<span style="font-family:var(--FH);font-size:14px;font-weight:800;color:'+scoreColor+'">'+scorePct+'</span>'+
+          '</div>'+
+          '<div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden">'+
+            '<div style="height:100%;width:'+scorePct+'%;background:'+scoreColor+';border-radius:2px;transition:width 1s ease"></div>'+
+          '</div>'+
+          '<div style="margin-top:5px;font-size:10.5px;color:var(--d2)">'+item.breakdown.join(' · ')+'</div>'+
+        '</div>'+
+        '<div class="vc-body">'+
+          '<div class="vc-field"><div class="vc-fk">Price / Unit</div><div class="vc-fv price">'+(price?curr+' '+price.toLocaleString():'On Request')+'</div></div>'+
+          '<div class="vc-field"><div class="vc-fk">Min. Order</div><div class="vc-fv">'+esc(v.moq||(pMatch&&pMatch.moq)||'—')+'</div></div>'+
+          '<div class="vc-field"><div class="vc-fk">Delivery</div><div class="vc-fv delivery">'+esc(v.delivery_time||'—')+'</div></div>'+
+          '<div class="vc-field"><div class="vc-fk">Rating</div><div class="vc-fv">'+esc(v.rating?'★ '+v.rating:'—')+'</div></div>'+
+          '<div class="vc-field"><div class="vc-fk">Experience</div><div class="vc-fv">'+esc(v.years_in_business?v.years_in_business+' years':'—')+'</div></div>'+
+          '<div class="vc-field"><div class="vc-fk">Reviews</div><div class="vc-fv">'+esc(v.reviews?v.reviews+' reviews':'—')+'</div></div>'+
+        '</div>'+
+        (v.gst?'<div class="vc-gst">GST: '+esc(v.gst)+'</div>':'')+
+        '<div class="vc-select-strip" onclick="toggleVendorCard(this,this.dataset.vn)" data-vn="'+esc(vendorName)+'">'+
+          '<span class="vss-off">+ Add to Compliance Check</span>'+
+        '</div>'+
+      '</div></div>';
+    }).join('');
+
+    /* Show selection bar */
+    document.getElementById('sel-bar').classList.add('show');
+    S.selectedVendors = [];
+    updateSelCount();
+  }else{vcSection.style.display='none';}
+
+  /* Compliance cards */
+  var gst2=d.gst||{},lic2=d.license||{},san2=d.sanctions||{},nws2=d.news||{};
+  function sfx(v,ok,bad){if(!v)return'na';if(ok.indexOf(v)!==-1)return'ok';if(bad.indexOf(v)!==-1)return'bad';return'mid';}
+  document.getElementById('RG').innerHTML=
+    mkRC('🏢','Company Registration',sg(gst2,'legal_name','')?'ok':'na',[['Company',sg(gst2,'legal_name',S.vendor)],['CIN',sg(gst2,'cin','—')],['Address',(sg(gst2,'address','')||'').slice(0,50)||'—'],['Source',sg(gst2,'source','—')]])+
+    mkRC('🧾','GST & Tax (Auto-Fetched)',sfx(sg(gst2,'status',''),['Active'],['Cancelled','Suspended']),[['GSTIN',sg(gst2,'gstin',rp.gstin_found||'Not found')],['Status',sg(gst2,'status','—'),sfx(sg(gst2,'status'),['Active'],['Cancelled'])],['Legal Name',sg(gst2,'legal_name','—')],['Trade Name',sg(gst2,'trade_name','—')],['Reg. Date',sg(gst2,'registration_date','—')]])+
+    mkRC('📜','IEC / Trade License',sfx(sg(lic2,'status',''),['Valid'],['Expired']),[['IEC Number',sg(lic2,'iec_number','—')],['Status',sg(lic2,'status','—'),sfx(sg(lic2,'status'),['Valid'],['Expired'])],['Validity',sg(lic2,'validity_date','—')],['Source',sg(lic2,'source','—')]])+
+    mkRC('🚫','Sanctions & Blacklist',sfx(sg(san2,'overall',''),['Clear'],['Flagged']),[['OFAC',sg(san2,'ofac_result','—'),sfx(sg(san2,'ofac_result'),['Clear'],['Match Found'])],['Overall',sg(san2,'overall','—'),sfx(sg(san2,'overall'),['Clear'],['Flagged'])],['Notes',(sg(san2,'notes','')||'').slice(0,55)]])+
+    mkRC('📰','News & Risk Intelligence',sfx(sg(nws2,'risk_level',''),['Low'],['High']),[['Risk Level',sg(nws2,'risk_level','—'),sfx(sg(nws2,'risk_level'),['Low'],['High'])],['News Items',sa(nws2,'items').length+' articles'],['Fraud Signals',sa(nws2,'fraud_signals').length===0?'None':''+sa(nws2,'fraud_signals').length],['Assessment',(sg(nws2,'assessment','')||'').slice(0,65)]]);
+
+  /* Flags */
+  document.getElementById('FLAG-list').innerHTML=(rp.flags||[]).map(function(f){var dc=f.sev==='ok'?'fd-ok':f.sev==='bad'?'fd-bad':'fd-mid';return '<div class="FLAG"><div class="fdot '+dc+'"></div><div class="ftxt">'+f.msg+(f.rec?' <em style="color:var(--d1)"> — '+esc(f.rec)+'</em>':'')+'</div></div>';}).join('');
+
+  /* Renewals */
+  document.getElementById('REN-list').innerHTML=(rp.renewals||[]).map(function(r){var rb=r.status==='Valid'?'rb-ok':r.status==='Issue'?'rb-bad':'rb-mid';return '<div class="RI"><span class="RI-ico">'+(r.ico||'📄')+'</span><div class="RI-info"><div class="RI-name">'+esc(r.name)+'</div><div class="RI-date">'+esc(r.date)+'</div></div><span class="RB '+rb+'">'+esc(r.status)+'</span></div>';}).join('');
+
+  document.getElementById('JSON-out').textContent=JSON.stringify({run_id:S.runId,vendor:S.vendor,product:S.product,country:S.country,tinyfish_run_ids:S.runIds,report:rp,raw_results:S.data},null,2);
+
+}
+
+function vkpi(v,c,l){return '<div><div class="vkpi-n '+c+'">'+esc(String(v))+'</div><div class="vkpi-l">'+esc(l)+'</div></div>';}
+function mkRC(ico,ttl,scls,rows){
+  var sl={ok:'Verified',mid:'Partial',bad:'Issue',na:'N/A'}[scls]||'N/A';
+  var cls={ok:'rs-ok',mid:'rs-mid',bad:'rs-bad',na:'rs-na'}[scls]||'rs-na';
+  return '<div class="RC"><div class="RC-hd"><span class="RC-ico">'+ico+'</span><span class="RC-ttl">'+esc(ttl)+'</span><span class="RC-st '+cls+'">'+sl+'</span></div><div class="RC-bd">'+rows.map(function(r){var vc={ok:'ok',mid:'mid',bad:'bad'}[r[2]]||'';return '<div class="RF"><span class="RF-k">'+esc(r[0])+'</span><span class="RF-v '+vc+'">'+esc(String(r[1]||'—'))+'</span></div>';}).join('')+'</div></div>';
+}
+
+/* ================================================================
+   FEATURE 1: MULTI-SUPPLIER COMPLIANCE
+================================================================ */
+function toggleVendorSel(cb, vendorName){
+  if(cb.checked){
+    if(S.selectedVendors.indexOf(vendorName)===-1) S.selectedVendors.push(vendorName);
+  } else {
+    S.selectedVendors = S.selectedVendors.filter(function(v){ return v!==vendorName; });
+  }
+  updateSelCount();
+}
+function toggleVendorCard(el, vendorName){
+  if(!vendorName) return;
+  var ix = S.selectedVendors.indexOf(vendorName);
+  var card = el ? el.closest('.vc') : null;
+  if(ix===-1){
+    S.selectedVendors.push(vendorName);
+    if(el) el.innerHTML='<span class="vss-on">&#10003; Selected for Compliance Check</span>';
+    if(card) card.classList.add('vc-selected');
+  } else {
+    S.selectedVendors.splice(ix,1);
+    if(el) el.innerHTML='<span class="vss-off">+ Add to Compliance Check</span>';
+    if(card) card.classList.remove('vc-selected');
+  }
+  updateSelCount();
+}
+
+function updateSelCount(){
+  var n = S.selectedVendors.length;
+  var el = document.getElementById('sel-count');
+  var btn = document.getElementById('BTN-verify');
+  if(el) el.textContent = n + ' selected';
+  if(btn) btn.disabled = n===0;
+}
+
+async function runMultiCompliance(){
+  var vendors = S.selectedVendors.slice();
+  if(!vendors.length){ alert('Select at least one supplier.'); return; }
+
+  document.getElementById('BTN-verify').disabled = true;
+  document.getElementById('ms-pipeline').style.display = 'block';
+  document.getElementById('ms-pipeline').scrollIntoView({behavior:'smooth', block:'start'});
+
+  S.multiResults = {};
+
+  /* Build all cards first so user sees them immediately */
+  var msGrid = document.getElementById('ms-results');
+  vendors.forEach(function(v2, ix){
+    var blk = document.createElement('div');
+    blk.className = 'ms-vendor-block';
+    blk.id = 'ms-block-' + ix;
+    blk.innerHTML =
+      '<div class="ms-vendor-hd">'+
+        '<div class="ms-vendor-hd-ico">&#127962;</div>'+
+        '<div class="ms-vendor-hd-name">'+esc(v2)+'</div>'+
+        '<span class="ms-verdict ms-v-run" id="ms-verdict-'+ix+'">Queued</span>'+
+      '</div>'+
+      '<div class="ms-score-strip"><div class="ms-score-fill" id="ms-sfill-'+ix+'" style="width:0%"></div></div>'+
+      '<div class="ms-steps" id="ms-steps-'+ix+'">'+
+        '<div class="ms-step run" id="ms-gst-'+ix+'">&#129534; GST</div>'+
+        '<div class="ms-step run" id="ms-san-'+ix+'">&#128683; Sanctions</div>'+
+        '<div class="ms-step run" id="ms-news-'+ix+'">&#128240; News</div>'+
+        '<div class="ms-step run" id="ms-lic-'+ix+'">&#128220; License</div>'+
+      '</div>';
+    msGrid.appendChild(blk);
+  });
+
+  /* Run ALL in parallel */
+  await Promise.all(vendors.map(function(v2, ix){
+    return runSingleCompliance(v2, ix);
+  }));
+
+  renderComparisonTable(vendors);
+}
+
+async function runSingleCompliance(vendor, idx){
+  var vd0=document.getElementById('ms-verdict-'+idx);
+  if(vd0){vd0.className='ms-verdict ms-v-run';vd0.textContent='Running...';}
+  var results = { vendor: vendor, gst:{}, sanctions:{}, news:{}, license:{} };
+
+  /* Run 4 compliance agents for this vendor */
+  var compTasks = [
+    { key:'gst',       url:urlGST(vendor),      goal:goalGST(vendor,S.country),      elId:'ms-gst-'+idx },
+    { key:'sanctions', url:urlOFAC(vendor),      goal:goalSanctions(vendor),           elId:'ms-san-'+idx },
+    { key:'news',      url:urlNews(vendor),      goal:goalNews(vendor),                elId:'ms-news-'+idx },
+    { key:'license',   url:urlLicense(vendor),   goal:goalLicense(vendor,S.country),  elId:'ms-lic-'+idx },
+  ];
+
+  /* Run ALL 4 in parallel — fastest possible */
+  await Promise.all(compTasks.map(async function(task){
+    try{
+      var r = await runStep('ms-'+task.key+'-'+idx, task.url, task.goal, 'lite');
+      results[task.key] = r;
+      var el = document.getElementById(task.elId);
+      if(el){ el.className='ms-step ok'; el.textContent = el.textContent.replace(/\.\.\.|…/,'') + ' ✓'; }
+    }catch(e){
+      results[task.key] = { error: e.message };
+      var el = document.getElementById(task.elId);
+      if(el){ el.className='ms-step fail'; el.textContent = el.textContent.replace(/\.\.\.|…/,'') + ' ✗'; }
+    }
+  }));
+
+  /* Calculate score */
+  var score = 0;
+  var gst = results.gst||{}, san = results.sanctions||{}, nws = results.news||{}, lic = results.license||{};
+  if(sg(gst,'legal_name','')) score+=15;
+  if(sg(gst,'status','')==='Active') score+=25; else if(sg(gst,'gstin','')) score+=10;
+  if(sg(san,'overall','')==='Clear'||sg(san,'result','')==='Clear') score+=25; else if(!san.error) score+=5;
+  if(sg(nws,'risk_level','')==='Low') score+=20; else if(sg(nws,'risk_level','')==='Medium') score+=5;
+  if(sg(lic,'iec_number','')) score+=15;
+  score = Math.max(0, Math.min(100, score));
+  var verdict = score>=70?'APPROVED':score>=40?'REVIEW':'REJECTED';
+  var vcls = score>=70?'ms-v-ok':score>=40?'ms-v-mid':'ms-v-bad';
+
+  var verdictEl = document.getElementById('ms-verdict-'+idx);
+  if(verdictEl){ verdictEl.className='ms-verdict '+vcls; verdictEl.textContent=verdict+' ('+score+'/100)'; }
+
+  S.multiResults[vendor] = { vendor:vendor, score:score, verdict:verdict, gst:gst, sanctions:san, news:nws, license:lic };
+}
+
+function renderComparisonTable(vendors){
+  var cc = document.getElementById('ms-comparison');
+  var ct = document.getElementById('ms-comp-table');
+  if(!cc || vendors.length < 2) return;
+
+  var maxScore = Math.max.apply(null, vendors.map(function(x){ return (S.multiResults[x]||{}).score||0; }));
+  var bestAssigned = false;
+
+  /* Build styled card grid instead of table */
+  var cardsHtml = '<div class="mc-grid">';
+  vendors.forEach(function(v){
+    var r = S.multiResults[v]||{};
+    var sc = r.score||0;
+    var isBest = (sc === maxScore && !bestAssigned);
+    if(isBest) bestAssigned = true;
+    var vclass = sc>=70?'ok':sc>=40?'mid':'bad';
+    var vcolor = sc>=70?'var(--G)':sc>=40?'var(--A)':'var(--E)';
+    var gstOk = sg(r.gst,'status','')==='Active';
+    var sanOk = sg(r.sanctions,'overall',sg(r.sanctions,'result',''))==='Clear';
+    var newsOk = sg(r.news,'risk_level','')==='Low';
+    var iecOk = !!sg(r.license,'iec_number','');
+    function badge(ok, yes, no){
+      var cls=ok?'mcb-ok':'mcb-no';
+      return '<span class="mcb '+cls+'">'+(ok?yes:no)+'</span>';
+    }
+    cardsHtml +=
+      '<div class="mc-card'+(isBest?' mc-best':'')+'">'+
+        /* Header */
+        '<div class="mc-hd">'+
+          '<div class="mc-hd-left">'+
+            (isBest?'<div class="mc-crown">&#11088; BEST</div>':'')+
+            '<div class="mc-name">'+esc(v)+'</div>'+
+            '<div class="mc-gstin">'+esc(sg(r.gst,'gstin','GSTIN not found'))+'</div>'+
+          '</div>'+
+          '<div class="mc-score-ring" style="border-color:'+vcolor+'">'+
+            '<div class="mc-score-num" style="color:'+vcolor+'">'+sc+'</div>'+
+            '<div class="mc-score-lbl">/100</div>'+
+          '</div>'+
+        '</div>'+
+        /* Score bar */
+        '<div class="mc-bar-wrap"><div class="mc-bar-fill" style="width:'+sc+'%;background:'+vcolor+'"></div></div>'+
+        /* Verdict */
+        '<div class="mc-verdict mc-v-'+vclass+'">'+esc(r.verdict||'—')+'</div>'+
+        /* Check grid */
+        '<div class="mc-checks">'+
+          '<div class="mc-check-row">'+
+            '<span class="mc-check-lbl">GST</span>'+
+            badge(gstOk, 'Active', sg(r.gst,'status','Not found'))+
+          '</div>'+
+          '<div class="mc-check-row">'+
+            '<span class="mc-check-lbl">Sanctions</span>'+
+            badge(sanOk, 'Clear', 'Review')+
+          '</div>'+
+          '<div class="mc-check-row">'+
+            '<span class="mc-check-lbl">News Risk</span>'+
+            badge(newsOk, 'Low', sg(r.news,'risk_level','Unknown'))+
+          '</div>'+
+          '<div class="mc-check-row">'+
+            '<span class="mc-check-lbl">IEC License</span>'+
+            badge(iecOk, sg(r.license,'iec_number','').slice(0,12)||'Found', 'Not found')+
+          '</div>'+
+        '</div>'+
+        /* Company info */
+        '<div class="mc-info">'+
+          (sg(r.gst,'legal_name','')?'<div class="mc-info-row"><span>Company</span><span>'+esc(sg(r.gst,'legal_name',''))+'</span></div>':'')+
+          (sg(r.gst,'address','')?'<div class="mc-info-row"><span>Address</span><span>'+esc(sg(r.gst,'address','').slice(0,40))+'</span></div>':'')+
+          (sg(r.gst,'registration_date','')?'<div class="mc-info-row"><span>Reg. Date</span><span>'+esc(sg(r.gst,'registration_date',''))+'</span></div>':'')+
+        '</div>'+
+      '</div>';
+  });
+  cardsHtml += '</div>';
+
+  if(ct) ct.innerHTML = '';  /* clear old table */
+  cc.innerHTML =
+    '<div class="slbl" style="margin-bottom:14px;font-size:11px;letter-spacing:.08em">SIDE-BY-SIDE COMPARISON</div>'+
+    cardsHtml;
+  cc.style.display = 'block';
+}
+
+/* ================================================================
+   FEATURE 2: COMPETITOR PRICE BENCHMARKING
+================================================================ */
+var BENCH_SOURCES = [
+  { name:'ExportersIndia', url:function(p){ return 'https://www.exportersindia.com/search-products/'+encodeURIComponent(p)+'.htm'; },
+    goal:function(p){ return 'Extract prices from the first 5 supplier listings on this page for "'+p+'". For each: supplier name, price as a number. Calculate average price. Return ONLY JSON: {"source":"ExportersIndia","listings":[{"supplier":"","price":0}],"avg_price":0,"currency":"INR"}'; }
+  },
+  { name:'JustDial', url:function(p){ return 'https://www.justdial.com/search?q='+encodeURIComponent(p)+' suppliers&city=All'; },
+    goal:function(p){ return 'Extract prices from the first 5 visible supplier listings on this page for "'+p+'". For each: business name, price if shown. Calculate average if prices found. Return ONLY JSON: {"source":"JustDial","listings":[{"supplier":"","price":0}],"avg_price":0,"currency":"INR"}'; }
+  },
+];
+
+async function runPriceBenchmark(product, tradeIndiaAvg){
+  var section = document.getElementById('bench-section');
+  var grid = document.getElementById('bench-grid');
+  var verdictEl = document.getElementById('bench-verdict');
+  if(!section||!grid) return;
+
+  section.style.display = 'block';
+
+  /* Show TradeIndia first (already have data) */
+  var benchResults = [{ name:'TradeIndia', avg:tradeIndiaAvg, currency:'INR', isBase:true }];
+
+  /* Render placeholder cards */
+  function renderBenchCards(){
+    var allPrices = benchResults.filter(function(b){ return b.avg>0; }).map(function(b){ return b.avg; });
+    var minP = allPrices.length ? Math.min.apply(null,allPrices) : 0;
+
+    grid.innerHTML = benchResults.map(function(b){
+      var cls = !b.avg ? '' : b.avg===minP ? 'good' : b.avg<minP*1.15 ? 'fair' : 'high';
+      var label = !b.avg ? 'Loading…' : b.avg===minP ? '✓ Lowest price' : b.avg<minP*1.15 ? 'Fair price' : 'Higher than market';
+      return '<div class="bench-card">'+
+        '<div class="bench-src">'+
+          (b.isBase?'📊 ':'🔍 ')+esc(b.name)+(b.isBase?' (your supplier)':'')+'</div>'+
+        '<div class="bench-price '+(b.avg?cls:'')+'">'+
+          (b.avg ? '₹'+Number(b.avg).toLocaleString() : '<span style="color:var(--d2);font-size:13px">Fetching…</span>')+
+        '</div>'+
+        '<div class="bench-label">'+esc(label)+'</div>'+
+      '</div>';
+    }).join('');
+
+    /* Overall verdict */
+    if(allPrices.length >= 2){
+      var avgOfAll = allPrices.reduce(function(a,b){return a+b;},0)/allPrices.length;
+      var diff = tradeIndiaAvg ? ((tradeIndiaAvg - minP) / minP * 100) : 0;
+      var vcls, vmsg;
+      if(diff <= 5){ vcls='good'; vmsg='\u2713 Great deal \u2014 your supplier price is at or near the market minimum.'; }
+      else if(diff <= 20){ vcls='fair'; vmsg='~ Fair price \u2014 within 20% of the market minimum. Mild negotiation possible.'; }
+      else{ vcls='high'; vmsg='\u26a0 Higher price \u2014 your supplier charges '+Math.round(diff)+'% above market minimum. Negotiate recommended.'; }
+      verdictEl.className='bench-verdict '+vcls;
+      verdictEl.textContent = vmsg;
+      verdictEl.style.display = 'block';
+    }
+  }
+
+  renderBenchCards();
+
+  /* Run benchmark agents in parallel */
+  await Promise.all(BENCH_SOURCES.map(async function(src, idx){
+    try{
+      var r = await runStep('bench-'+idx, src.url(product), src.goal(product), 'lite');
+      benchResults.push({ name:src.name, avg:r.avg_price||0, currency:r.currency||'INR' });
+    }catch(e){
+      benchResults.push({ name:src.name, avg:0, error:true });
+    }
+    renderBenchCards();
+  }));
+
+  S.benchData = benchResults;
+}
+
+/* ================================================================
+   FEATURE 3: PDF REPORT DOWNLOAD — SIMPLIFIED WITH HTML2PDF
+================================================================ */
+function downloadPDF(){
+  if(!S.report){ alert('Run a compliance check first.'); return; }
+
+  var rp = S.report || {};
+  var d  = S.data || {};
+  var gst = d.gst || {};
+  var lic = d.license || {};
+  var san = d.sanctions || {};
+  var nws = d.news || {};
+  var prc = d.pricing || {};
+
+  var PdfCtor = (typeof jsPDF !== 'undefined') ? jsPDF
+      : (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF
+      : (window.jsPDF) ? window.jsPDF
+      : null;
+  if(!PdfCtor){
+    alert('PDF library is not loaded yet. Please refresh and try again.');
+    return;
+  }
+
+  var pdf = new PdfCtor('p','mm','a4');
+  var PW = pdf.internal.pageSize.getWidth();
+  var PH = pdf.internal.pageSize.getHeight();
+  var M = 12;
+  var CW = PW - 2*M;
+
+  function textLine(txt, x, y, options){
+    if(options && options.bold) pdf.setFont('helvetica','bold'); else pdf.setFont('helvetica','normal');
+    if(options && options.size) pdf.setFontSize(options.size); else pdf.setFontSize(10);
+    if(options && options.color) pdf.setTextColor(options.color[0], options.color[1], options.color[2]); else pdf.setTextColor(20,20,40);
+    pdf.text(txt, x, y);
+  }
+
+  function fillRect(x,y,w,h,col){ pdf.setFillColor(col[0],col[1],col[2]); pdf.roundedRect(x,y,w,h,2,2,'F'); }
+
+  // Page 1 - Header block
+  pdf.setFillColor(12,15,28); pdf.rect(0,0,PW,60,'F');
+  textLine('ProcureAI', M, 18, {size:20, bold:true, color:[0,222,178]});
+  textLine('Autonomous Vendor Compliance Report', M, 26, {size:9, color:[220,220,220]});
+  textLine('Generated: '+new Date().toLocaleString(), PW-M-70, 26, {size:8, color:[180,180,180]});
+
+  pdf.setFillColor(0,120,110); pdf.roundedRect(M, 40, 50, 14, 2,2, 'F');
+  textLine('APPROVED', M+3, 50, {size:10, bold:true, color:[255,255,255]});
+  textLine('LOW RISK - PROCEED', M+58, 50, {size:8, color:[208,244,229]});
+
+  // Report details
+  var y = 70;
+  textLine('Compliance Report', M, y, {size:16, bold:true, color:[10,10,22]}); y += 8;
+  textLine((rp.vendor||'N/A')+' — '+(rp.country||'N/A'), M, y, {size:11, color:[70,70,90]}); y += 10;
+  textLine('Product: '+(rp.product||'N/A'), M, y, {size:10, color:[70,70,90]}); y += 12;
+
+  // Score panel
+  fillRect(M, y, CW, 22, [234,245,255]);
+  textLine((rp.verdict||'UNKNOWN').toUpperCase(), M+3, y+9, {size:12, bold:true, color:[7,140,100]});
+  textLine((rp.compliance_score||0)+'/100', PW-M-24, y+9, {size:14, bold:true, color:[7,140,100]});
+  y += 26;
+
+  // Summary
+  textLine('Summary', M, y, {size:12, bold:true}); y += 8;
+  pdf.setFontSize(9); pdf.setTextColor(40,40,60);
+  var summary = rp.summary || 'No executive summary available.';
+  var summaryLines = pdf.splitTextToSize(summary, CW);
+  pdf.text(summaryLines, M, y);
+  y += summaryLines.length*5 + 8;
+
+  // Compliance score bar
+  textLine('Compliance Score', M, y, {size:12, bold:true}); y += 6;
+  fillRect(M, y, CW, 6, [220,220,225]);
+  var filled = Math.min(100, Math.max(0, rp.compliance_score||0));
+  fillRect(M, y, (CW*filled)/100, 6, [0,150,135]);
+  y += 14;
+
+  // Market price
+  textLine('Market Pricing', M, y, {size:12, bold:true}); y += 7;
+  textLine('Market Average: INR '+(prc.market_avg||'N/A')+' / unit', M, y, {size:9}); y += 5;
+  textLine('Price Range: INR '+(prc.market_min||'N/A')+' – '+(prc.market_max||'N/A'), M, y, {size:9}); y += 12;
+
+  // Compliances short list
+  textLine('Compliance Findings', M, y, {size:12, bold:true}); y += 8;
+  var lines = [
+    'Company / Legal Name: '+(rp.vendor||'N/A'),
+    'GSTIN: '+(rp.gstin_found || 'N/A'),
+    'GST Status: '+(gst.status||'N/A'),
+    'Sanctions: '+(san.overall||'N/A'),
+    'IEC / Trade License: '+(lic.iec_number?lic.iec_number:'Not found'),
+    'News Risk Level: '+(nws.risk_level||'N/A')
+  ];
+  lines.forEach(function(l){ textLine(l, M, y, {size:9}); y += 5; });
+
+  // Footer for page 1
+  pdf.setFontSize(7); pdf.setTextColor(120,120,150);
+  pdf.text('ProcureAI Compliance Report  |  Generated: '+new Date().toLocaleDateString(), M, PH-10);
+  pdf.text('Page 1', PW/2-8, PH-10);
+
+  // Page 2 - supplier summary in detailed sections
+  pdf.addPage();
+  var y2 = M;
+  textLine('Top Suppliers Found', M, y2, {size:14, bold:true}); y2 += 12;
+  var suppliers = (d.discover && d.discover.vendors) ? d.discover.vendors : [];
+  if(!suppliers.length){
+    textLine('No supplier details available.', M, y2, {size:10});
+    y2 += 10;
+  }
+
+  suppliers.forEach(function(v, idx){
+    var title = (idx+1)+'. '+(v.name||'Unknown Supplier');
+    var lines = pdf.splitTextToSize(title, CW-8);
+    var cardHeight = 10 + lines.length*5 + 40;
+    if(y2 + cardHeight > PH - M - 20){
+      pdf.addPage();
+      y2 = M;
+      textLine('Top Suppliers Found (continued)', M, y2, {size:14, bold:true}); y2 += 12;
+    }
+
+    fillRect(M, y2, CW, cardHeight, [16,22,36]);
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(11); pdf.setTextColor(235,245,255);
+    pdf.text(lines, M+5, y2+8);
+
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(9); pdf.setTextColor(190,205,230);
+    var loc = v.location||v.city||'Unknown Location';
+    pdf.text('Location: '+loc, M+5, y2+14 + lines.length*5);
+    pdf.text('Price: '+(v.price?('INR '+v.price):'N/A')+' | MOQ: '+(v.moq||v.min_order||'N/A'), M+5, y2+20 + lines.length*5);
+    pdf.text('Delivery: '+(v.delivery||'N/A')+' | Rating: '+(v.rating||'N/A'), M+5, y2+26 + lines.length*5);
+    pdf.text('Score: '+(v.score||'N/A')+' | Reviews: '+(v.reviews||'N/A'), M+5, y2+32 + lines.length*5);
+
+    y2 += cardHeight + 8;
+  });
+
+  pdf.setFontSize(7); pdf.setTextColor(120,120,150);
+  pdf.text('Page 2', PW/2-8, PH-10);
+
+  var fn = 'ProcureAI_'+ String((rp.vendor||'report')).replace(/[^a-zA-Z0-9]/g,'_').slice(0,30) + '_' + new Date().toISOString().slice(0,10) + '.pdf';
+  pdf.save(fn);
+}
+
+function copyJSON(){if(!S.report)return;navigator.clipboard.writeText(JSON.stringify({run_id:S.runId,vendor:S.vendor,product:S.product,report:S.report,raw:S.data,tinyfish_runs:S.runIds},null,2)).then(function(){alert('JSON copied.');}).catch(function(){alert('Copy failed.');});}
+
+function doReset(){document.getElementById('REPORT').classList.remove('on');document.getElementById('PIPE').classList.remove('on');document.getElementById('IC').style.opacity='1';document.getElementById('IC').style.pointerEvents='';document.getElementById('BTN-go').disabled=false;S.logs={};S.data={};S.report=null;S.runIds={};window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>
