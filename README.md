@@ -1,4 +1,3 @@
-[serverjs-packagejson-indexhtml.md](https://github.com/user-attachments/files/26265001/serverjs-packagejson-indexhtml.md)
 # ProcureAI Application Feature Documentation
 
 ## Overview
