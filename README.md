@@ -43,10 +43,10 @@ flowchart TB
   - `POST /api/stream`: Starts SSE proxy for agent run.  
   - Fallback: Returns 404 JSON for others.
 
-[!NOTE]  
+NOTE  
 All JSON endpoints include `Access-Control-Allow-Origin: *`.
 
-[!IMPORTANT]  
+IMPORTANT  
 The SSE proxy enforces a 10-minute timeout to abort stalled streams.
 
 ### 2. Client Layer
